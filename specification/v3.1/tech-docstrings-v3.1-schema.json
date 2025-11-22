@@ -1,0 +1,121 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "TECH-DOCSTRINGS v3.1",
+  "description": "Documentation strings with coordinates",
+  "type": "object",
+  "required": ["meta", "docstrings_text"],
+  "properties": {
+    "meta": {
+      "type": "object",
+      "required": ["version"],
+      "properties": {
+        "version": {
+          "type": "string",
+          "pattern": "^3\\.1$"
+        },
+        "generated": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "project": {
+          "type": "string"
+        }
+      }
+    },
+    "docstrings_text": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Docstring text dictionary"
+    },
+    "modules": {
+      "type": "array",
+      "items": {
+        "type": "array",
+        "minItems": 2,
+        "items": [
+          {
+            "type": "integer",
+            "minimum": 0,
+            "description": "location_id (from INDEX)"
+          },
+          {
+            "type": "array",
+            "description": "docstrings array",
+            "items": {
+              "type": "array",
+              "minItems": 4,
+              "items": [
+                {
+                  "type": "integer",
+                  "minimum": 0,
+                  "description": "docstrings_text_idx"
+                },
+                {
+                  "type": "integer",
+                  "minimum": 0,
+                  "description": "file_idx"
+                },
+                {
+                  "type": "integer",
+                  "minimum": 1,
+                  "description": "line_start"
+                },
+                {
+                  "type": "integer",
+                  "minimum": 1,
+                  "description": "line_end"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    "classes": {
+      "type": "array",
+      "items": {
+        "type": "array",
+        "minItems": 2,
+        "items": [
+          {
+            "type": "integer",
+            "minimum": 0,
+            "description": "location_id"
+          },
+          {
+            "type": "array",
+            "description": "docstrings array",
+            "items": {
+              "type": "array",
+              "minItems": 4
+            }
+          }
+        ]
+      }
+    },
+    "functions": {
+      "type": "array",
+      "items": {
+        "type": "array",
+        "minItems": 2,
+        "items": [
+          {
+            "type": "integer",
+            "minimum": 0,
+            "description": "location_id"
+          },
+          {
+            "type": "array",
+            "description": "docstrings array",
+            "items": {
+              "type": "array",
+              "minItems": 4
+            }
+          }
+        ]
+      }
+    }
+  }
+}

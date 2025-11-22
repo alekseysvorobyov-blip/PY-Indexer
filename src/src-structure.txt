@@ -1,0 +1,142 @@
+============================================================
+ PROJECT STRUCTURE: src
+============================================================
+
+Generated: 22.11.2025 17:22:27,78
+Path: D:\AI\PY-Indexer\repo\PY-Indexer\src
+
+Excluded directories: node_modules .git .venv __pycache__ .idea .vscode bin obj target build dist
+
+============================================================
+
+Folder PATH listing
+Volume serial number is FC25-66D4
+D:.
+|   .gitignore
+|   ARCHITECTURE.md
+|   config.example.yaml
+|   config_loader.py
+|   export-structure-advanced.bat
+|   index-codeguard-full.bat
+|   index-codeguard-simple.bat
+|   index-codeguard.bat
+|   indexer.py
+|   main.log
+|   main.py
+|   parser.py
+|   pyproject.toml
+|   README.md
+|   README.v.3.1.md
+|   requirements.txt
+|   setup-structure.bat
+|   src-structure-temp.txt
+|   src-structure.txt
+|   validator.py
+|   __init__.py
+|   
++---builders
+|   |   .gitignore
+|   |   builder_comments.py
+|   |   builder_docstrings.py
+|   |   builder_location.py
+|   |   builder_tech_index.py
+|   |   __init__.py
+|   |   
+|   \---__pycache__
+|           builder_location.cpython-313.pyc
+|           builder_tech_index.cpython-313.pyc
+|           __init__.cpython-313.pyc
+|           
++---cli
+|   |   .gitignore
+|   |   cli_index.py
+|   |   cli_location.py
+|   |   __init__.py
+|   |   
+|   \---__pycache__
+|           cli_index.cpython-313.pyc
+|           cli_location.cpython-313.pyc
+|           __init__.cpython-313.pyc
+|           
++---serializers
+|   |   .gitignore
+|   |   serializer_base.py
+|   |   serializer_json.py
+|   |   serializer_msgpack.py
+|   |   __init__.py
+|   |   
+|   \---__pycache__
+|           serializer_base.cpython-313.pyc
+|           serializer_json.cpython-313.pyc
+|           serializer_msgpack.cpython-313.pyc
+|           __init__.cpython-313.pyc
+|           
++---tests
+|       __init__.py
+|       
++---utils
+|   |   .gitignore
+|   |   utils_file.py
+|   |   utils_hash.py
+|   |   utils_logger.py
+|   |   __init__.py
+|   |   
+|   \---__pycache__
+|           utils_file.cpython-313.pyc
+|           utils_hash.cpython-313.pyc
+|           utils_logger.cpython-313.pyc
+|           __init__.cpython-313.pyc
+|           
++---viewers
+|   |   .gitignore
+|   |   viewer_index.py
+|   |   __init__.py
+|   |   
+|   \---__pycache__
+|           viewer_index.cpython-313.pyc
+|           __init__.cpython-313.pyc
+|           
+\---__pycache__
+        config_loader.cpython-313.pyc
+        indexer.cpython-313.pyc
+        parser.cpython-313.pyc
+        validator.cpython-313.pyc
+        
+ 
+============================================================ 
+ FILES BY EXTENSION 
+============================================================ 
+ 
+.md files: 3 
+.txt files: 3 
+.yaml files: 1 
+.bat files: 5 
+.py files: 25 
+ 
+============================================================ 
+ STATISTICS 
+============================================================ 
+ 
+Directories: 12 
+Files: 65 
+Total size: 756631 bytes 
+Total size: 0 MB 
+ 
+============================================================ 
+ LARGEST FILES (TOP 10) 
+============================================================ 
+ 
+Volume Serial Number is FC25-66D4 
+22.11.2025  16:22           376 934 main.log 
+22.11.2025  15:48            20 652 indexer.py 
+22.11.2025  17:21            15 807 main.py 
+22.11.2025  17:21            13 763 parser.py 
+22.11.2025  15:43            11 021 validator.py 
+22.11.2025  17:00            10 666 ARCHITECTURE.md 
+22.11.2025  16:13             7 434 config_loader.py 
+22.11.2025  15:26             5 615 README.md 
+22.11.2025  17:00             4 802 README.v.3.1.md 
+ 
+============================================================ 
+End of structure export 
+============================================================ 

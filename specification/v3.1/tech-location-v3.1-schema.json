@@ -1,0 +1,144 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "TECH-LOCATION v3.1",
+  "description": "Code coordinates mapping (location_id → file positions)",
+  "type": "object",
+  "required": ["meta", "files"],
+  "properties": {
+    "meta": {
+      "type": "object",
+      "required": ["version"],
+      "properties": {
+        "version": {
+          "type": "string",
+          "pattern": "^3\\.1$"
+        },
+        "generated": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "project": {
+          "type": "string"
+        }
+      }
+    },
+    "files": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "File paths (same as INDEX)"
+    },
+    "modules": {
+      "type": "array",
+      "items": {
+        "type": "array",
+        "minItems": 4,
+        "items": [
+          {
+            "type": "integer",
+            "minimum": 0,
+            "description": "location_id (from INDEX)"
+          },
+          {
+            "type": "integer",
+            "minimum": 0,
+            "description": "file_idx"
+          },
+          {
+            "type": "integer",
+            "minimum": 1,
+            "description": "line_start"
+          },
+          {
+            "type": "integer",
+            "minimum": 1,
+            "description": "line_end"
+          }
+        ]
+      }
+    },
+    "classes": {
+      "type": "array",
+      "items": {
+        "type": "array",
+        "minItems": 4,
+        "items": [
+          {
+            "type": "integer",
+            "minimum": 0,
+            "description": "location_id"
+          },
+          {
+            "type": "integer",
+            "minimum": 0,
+            "description": "file_idx"
+          },
+          {
+            "type": "integer",
+            "minimum": 1,
+            "description": "line_start"
+          },
+          {
+            "type": "integer",
+            "minimum": 1,
+            "description": "line_end"
+          }
+        ]
+      }
+    },
+    "functions": {
+      "type": "array",
+      "items": {
+        "type": "array",
+        "minItems": 4,
+        "items": [
+          {
+            "type": "integer",
+            "minimum": 0,
+            "description": "location_id"
+          },
+          {
+            "type": "integer",
+            "minimum": 0,
+            "description": "file_idx"
+          },
+          {
+            "type": "integer",
+            "minimum": 1,
+            "description": "line_start"
+          },
+          {
+            "type": "integer",
+            "minimum": 1,
+            "description": "line_end"
+          }
+        ]
+      }
+    },
+    "imports": {
+      "type": "array",
+      "items": {
+        "type": "array",
+        "minItems": 3,
+        "items": [
+          {
+            "type": "integer",
+            "minimum": 0,
+            "description": "location_id"
+          },
+          {
+            "type": "integer",
+            "minimum": 0,
+            "description": "file_idx"
+          },
+          {
+            "type": "integer",
+            "minimum": 1,
+            "description": "line_number"
+          }
+        ]
+      }
+    }
+  }
+}

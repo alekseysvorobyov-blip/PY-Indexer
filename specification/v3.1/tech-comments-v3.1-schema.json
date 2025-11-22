@@ -1,0 +1,116 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "TECH-COMMENTS v3.1",
+  "description": "Code comments with coordinates",
+  "type": "object",
+  "required": ["meta", "comments_text"],
+  "properties": {
+    "meta": {
+      "type": "object",
+      "required": ["version"],
+      "properties": {
+        "version": {
+          "type": "string",
+          "pattern": "^3\\.1$"
+        },
+        "generated": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "project": {
+          "type": "string"
+        }
+      }
+    },
+    "comments_text": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Comment text dictionary"
+    },
+    "modules": {
+      "type": "array",
+      "items": {
+        "type": "array",
+        "minItems": 2,
+        "items": [
+          {
+            "type": "integer",
+            "minimum": 0,
+            "description": "location_id (from INDEX)"
+          },
+          {
+            "type": "array",
+            "description": "comments array",
+            "items": {
+              "type": "array",
+              "minItems": 3,
+              "items": [
+                {
+                  "type": "integer",
+                  "minimum": 0,
+                  "description": "comments_text_idx"
+                },
+                {
+                  "type": "integer",
+                  "minimum": 0,
+                  "description": "file_idx"
+                },
+                {
+                  "type": "integer",
+                  "minimum": 1,
+                  "description": "line_number"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    "classes": {
+      "type": "array",
+      "items": {
+        "type": "array",
+        "minItems": 2,
+        "items": [
+          {
+            "type": "integer",
+            "minimum": 0,
+            "description": "location_id"
+          },
+          {
+            "type": "array",
+            "description": "comments array",
+            "items": {
+              "type": "array",
+              "minItems": 3
+            }
+          }
+        ]
+      }
+    },
+    "functions": {
+      "type": "array",
+      "items": {
+        "type": "array",
+        "minItems": 2,
+        "items": [
+          {
+            "type": "integer",
+            "minimum": 0,
+            "description": "location_id"
+          },
+          {
+            "type": "array",
+            "description": "comments array",
+            "items": {
+              "type": "array",
+              "minItems": 3
+            }
+          }
+        ]
+      }
+    }
+  }
+}

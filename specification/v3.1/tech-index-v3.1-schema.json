@@ -1,0 +1,219 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "TECH-INDEX v3.1",
+  "description": "Compact Python code structure index (NO coordinates)",
+  "type": "object",
+  "required": ["meta", "names", "files"],
+  "properties": {
+    "meta": {
+      "type": "object",
+      "required": ["version"],
+      "properties": {
+        "version": {
+          "type": "string",
+          "pattern": "^3\\.1$"
+        },
+        "generated": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "project": {
+          "type": "string"
+        }
+      }
+    },
+    "names": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Unified name dictionary (functions, classes, variables, types)"
+    },
+    "files": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "File paths relative to project root"
+    },
+    "modules": {
+      "type": "array",
+      "items": {
+        "type": "array",
+        "minItems": 4,
+        "items": [
+          {
+            "type": "integer",
+            "minimum": 0,
+            "description": "name_idx"
+          },
+          {
+            "type": "integer",
+            "minimum": 0,
+            "description": "file_idx"
+          },
+          {
+            "type": "integer",
+            "minimum": -1,
+            "description": "parent_idx (-1 = top-level)"
+          },
+          {
+            "type": "integer",
+            "minimum": 0,
+            "description": "location_id"
+          }
+        ]
+      }
+    },
+    "classes": {
+      "type": "array",
+      "items": {
+        "type": "array",
+        "minItems": 4,
+        "items": [
+          {
+            "type": "integer",
+            "minimum": 0,
+            "description": "name_idx"
+          },
+          {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            },
+            "description": "base_classes_idx[]"
+          },
+          {
+            "type": "integer",
+            "minimum": 0,
+            "description": "file_idx"
+          },
+          {
+            "type": "integer",
+            "minimum": 0,
+            "description": "location_id"
+          }
+        ]
+      }
+    },
+    "functions": {
+      "type": "array",
+      "items": {
+        "type": "array",
+        "minItems": 4,
+        "items": [
+          {
+            "type": "integer",
+            "minimum": 0,
+            "description": "name_idx"
+          },
+          {
+            "type": "integer",
+            "minimum": -1,
+            "description": "parent_class_idx (-1 = module-level)"
+          },
+          {
+            "type": "integer",
+            "minimum": 0,
+            "description": "file_idx"
+          },
+          {
+            "type": "integer",
+            "minimum": 0,
+            "description": "location_id"
+          }
+        ]
+      }
+    },
+    "imports": {
+      "type": "array",
+      "items": {
+        "type": "array",
+        "minItems": 3,
+        "items": [
+          {
+            "type": "integer",
+            "minimum": 0,
+            "description": "module_name_idx"
+          },
+          {
+            "type": "integer",
+            "minimum": 0,
+            "description": "file_idx"
+          },
+          {
+            "type": "integer",
+            "minimum": 0,
+            "description": "location_id"
+          }
+        ]
+      }
+    },
+    "typehints": {
+      "type": "object",
+      "description": "Type hints by location_id",
+      "patternProperties": {
+        "^[0-9]+$": {
+          "type": "object",
+          "properties": {
+            "params": {
+              "type": "array",
+              "items": {
+                "type": "array",
+                "minItems": 2,
+                "items": [
+                  {
+                    "type": "integer",
+                    "description": "param_name_idx"
+                  },
+                  {
+                    "type": "integer",
+                    "description": "type_idx"
+                  }
+                ]
+              }
+            },
+            "return": {
+              "type": "integer",
+              "description": "return_type_idx"
+            }
+          }
+        }
+      }
+    },
+    "decorators": {
+      "type": "object",
+      "description": "Decorators by location_id",
+      "patternProperties": {
+        "^[0-9]+$": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "description": "decorator_name_idx"
+          }
+        }
+      }
+    },
+    "attributes": {
+      "type": "array",
+      "items": {
+        "type": "array",
+        "minItems": 3,
+        "items": [
+          {
+            "type": "integer",
+            "description": "name_idx"
+          },
+          {
+            "type": "integer",
+            "description": "parent_class_idx"
+          },
+          {
+            "type": "integer",
+            "description": "type_idx or -1"
+          }
+        ]
+      }
+    }
+  }
+}
