@@ -1,0 +1,35 @@
+{
+  "index_schema_properties": [
+    "meta",
+    "names",
+    "files",
+    "modules",
+    "classes",
+    "functions",
+    "parameters",
+    "docstrings",
+    "validation",
+    "imports",
+    "graph"
+  ],
+  "location_schema_properties": [
+    "meta",
+    "paths",
+    "modifieds",
+    "hashes",
+    "files",
+    "modules",
+    "classes",
+    "functions",
+    "imports",
+    "comments",
+    "decorators",
+    "commenttexts"
+  ],
+  "philosophy": {
+    "compression": "Index-based referencing",
+    "normalization": "Single source for strings",
+    "separation": "Two indexes for different use cases",
+    "structure": "Arrays instead of objects"
+  }
+}

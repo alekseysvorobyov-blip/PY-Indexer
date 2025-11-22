@@ -1,0 +1,446 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "TECH-INDEX-PY-v3.0",
+  "description": "Максимально компактная схема индексации Python проектов для AI-анализа с расширениями для проверки правил кода",
+  "type": "object",
+  "required": ["meta", "names", "files"],
+  "properties": {
+    "meta": {
+      "type": "object",
+      "required": ["version"],
+      "properties": {
+        "version": {
+          "type": "string",
+          "pattern": "^3\\.0"
+        },
+        "generated": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "project": {
+          "type": "string"
+        },
+        "schema_version": {
+          "type": "string"
+        },
+        "backward_compatible_with": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "names": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Справочник всех имен (переменные, функции, классы, типы)"
+    },
+    "files": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Массив путей к файлам проекта"
+    },
+    "filesizes": {
+      "type": "array",
+      "items": {
+        "type": "integer",
+        "minimum": 0
+      },
+      "description": "Размеры файлов в байтах (индекс соответствует files)"
+    },
+    "modules": {
+      "type": "array",
+      "items": {
+        "type": "array",
+        "minItems": 3,
+        "items": [
+          {
+            "type": "integer",
+            "minimum": 0,
+            "description": "nameidx"
+          },
+          {
+            "type": "integer",
+            "minimum": 0,
+            "description": "fileidx"
+          },
+          {
+            "type": "integer",
+            "minimum": -1,
+            "description": "locationid"
+          }
+        ]
+      }
+    },
+    "classes": {
+      "type": "array",
+      "items": {
+        "type": "array",
+        "minItems": 6
+      }
+    },
+    "functions": {
+      "type": "array",
+      "items": {
+        "type": "array"
+      }
+    },
+    "parameters": {
+      "type": "object",
+      "description": "Параметры функций по ID"
+    },
+    "attributes": {
+      "type": "array",
+      "items": {
+        "type": "array"
+      }
+    },
+    "docstrings": {
+      "type": "array",
+      "items": {
+        "type": "array"
+      }
+    },
+    "imports": {
+      "type": "array",
+      "items": {
+        "type": "array"
+      }
+    },
+    "validation": {
+      "type": "object"
+    },
+    "graph": {
+      "type": "object"
+    },
+    "typehints": {
+      "type": "object",
+      "description": "Type hints функций",
+      "patternProperties": {
+        "^[0-9]+$": {
+          "type": "object",
+          "properties": {
+            "params": {
+              "type": "array",
+              "items": {
+                "type": "array",
+                "minItems": 2,
+                "maxItems": 2,
+                "items": [
+                  {
+                    "type": "integer",
+                    "description": "param_name_idx"
+                  },
+                  {
+                    "type": "integer",
+                    "description": "type_idx (-1 if no type)"
+                  }
+                ]
+              }
+            },
+            "return": {
+              "type": "integer",
+              "description": "return_type_idx (-1 if no type)"
+            }
+          }
+        }
+      }
+    },
+    "defaults": {
+      "type": "object",
+      "description": "Default values параметров",
+      "patternProperties": {
+        "^[0-9]+$": {
+          "type": "array",
+          "items": {
+            "type": "array",
+            "minItems": 3,
+            "maxItems": 3,
+            "items": [
+              {
+                "type": "integer",
+                "description": "param_name_idx"
+              },
+              {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 7,
+                "description": "default_type: 0=None, 1=list, 2=dict, 3=set, 4=number, 5=string, 6=bool, 7=other"
+              },
+              {
+                "type": "integer",
+                "description": "default_value_idx or value"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "defaultvalues": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Справочник default values"
+    },
+    "defaultissues": {
+      "type": "array",
+      "items": {
+        "type": "array",
+        "minItems": 3,
+        "maxItems": 3,
+        "items": [
+          {
+            "type": "integer",
+            "description": "func_idx"
+          },
+          {
+            "type": "integer",
+            "description": "param_idx"
+          },
+          {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 3,
+            "description": "issue_type: 0=ok, 1=mutable_list, 2=mutable_dict, 3=mutable_set"
+          }
+        ]
+      },
+      "description": "Проблемы с mutable defaults"
+    },
+    "sqlqueries": {
+      "type": "array",
+      "items": {
+        "type": "array",
+        "minItems": 5,
+        "maxItems": 5,
+        "items": [
+          {
+            "type": "integer",
+            "description": "file_idx"
+          },
+          {
+            "type": "integer",
+            "minimum": 1,
+            "description": "line"
+          },
+          {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 4,
+            "description": "query_type: 0=SELECT, 1=INSERT, 2=UPDATE, 3=DELETE, 4=OTHER"
+          },
+          {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 1,
+            "description": "is_safe: 0=unsafe, 1=safe"
+          },
+          {
+            "type": "integer",
+            "description": "query_text_idx"
+          }
+        ]
+      }
+    },
+    "sqlquerytexts": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Справочник текстов SQL-запросов"
+    },
+    "hardcodedsecrets": {
+      "type": "array",
+      "items": {
+        "type": "array",
+        "minItems": 4,
+        "maxItems": 4,
+        "items": [
+          {
+            "type": "integer",
+            "description": "file_idx"
+          },
+          {
+            "type": "integer",
+            "minimum": 1,
+            "description": "line"
+          },
+          {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 4,
+            "description": "pattern_type: 0=API_KEY, 1=PASSWORD, 2=SECRET, 3=TOKEN, 4=PRIVATE_KEY"
+          },
+          {
+            "type": "integer",
+            "description": "var_name_idx"
+          }
+        ]
+      }
+    },
+    "loggingusage": {
+      "type": "object",
+      "properties": {
+        "functions_with_logger": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          },
+          "description": "Индексы функций использующих logger"
+        },
+        "try_except_blocks": {
+          "type": "array",
+          "items": {
+            "type": "array",
+            "minItems": 4,
+            "maxItems": 4,
+            "items": [
+              {
+                "type": "integer",
+                "description": "func_idx"
+              },
+              {
+                "type": "integer",
+                "description": "file_idx"
+              },
+              {
+                "type": "integer",
+                "minimum": 1,
+                "description": "line"
+              },
+              {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 1,
+                "description": "has_logging: 0=no, 1=yes"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "globalvars": {
+      "type": "array",
+      "items": {
+        "type": "array",
+        "minItems": 4,
+        "maxItems": 4,
+        "items": [
+          {
+            "type": "integer",
+            "description": "file_idx"
+          },
+          {
+            "type": "integer",
+            "minimum": 1,
+            "description": "line"
+          },
+          {
+            "type": "integer",
+            "description": "var_name_idx"
+          },
+          {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 1,
+            "description": "is_constant: 0=variable, 1=CONSTANT"
+          }
+        ]
+      }
+    },
+    "classdeps": {
+      "type": "object",
+      "description": "Зависимости классов для проверки DI",
+      "patternProperties": {
+        "^[0-9]+$": {
+          "type": "object",
+          "properties": {
+            "init_params": {
+              "type": "array",
+              "items": {
+                "type": "array",
+                "minItems": 2,
+                "maxItems": 2,
+                "items": [
+                  {
+                    "type": "integer",
+                    "description": "param_name_idx"
+                  },
+                  {
+                    "type": "integer",
+                    "description": "type_idx (-1 if no type)"
+                  }
+                ]
+              }
+            },
+            "internal_creation": {
+              "type": "array",
+              "items": {
+                "type": "integer"
+              },
+              "description": "Индексы классов создаваемых внутри (плохо для DI)"
+            }
+          }
+        }
+      }
+    },
+    "docstringformats": {
+      "type": "object",
+      "properties": {
+        "by_function": {
+          "type": "object",
+          "patternProperties": {
+            "^[0-9]+$": {
+              "type": "integer",
+              "minimum": -1,
+              "maximum": 3,
+              "description": "0=NumPy, 1=Google, 2=Sphinx, 3=Unknown, -1=None"
+            }
+          }
+        },
+        "coverage": {
+          "type": "object",
+          "properties": {
+            "total": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "with_docstrings": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "by_format": {
+              "type": "array",
+              "minItems": 4,
+              "maxItems": 4,
+              "items": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "description": "[NumPy_count, Google_count, Sphinx_count, Unknown_count]"
+            }
+          }
+        }
+      }
+    },
+    "testcoverage": {
+      "type": "object",
+      "description": "Связь тестов с функциями",
+      "patternProperties": {
+        "^[0-9]+$": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          },
+          "description": "Массив индексов тестовых функций"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,74 @@
+{
+  "meta": {
+    "version": "3.0",
+    "generated": "2025-11-22T14:30:00Z",
+    "project": "example-backend"
+  },
+  "paths": [
+    "app/services/user_service.py"
+  ],
+  "modifieds": [
+    "2025-11-22T10:15:30Z"
+  ],
+  "hashes": [
+    "abc123def456789..."
+  ],
+  "files": [
+    [0, 95, 2048, 0, 0]
+  ],
+  "modules": [
+    [0, -1, 0, 1, 95, null]
+  ],
+  "classes": [
+    [0, -1, 0, 14, 78, 14, 15]
+  ],
+  "functions": [
+    [1, -1, 0, 25, 38, 25, 26],
+    [2, -1, 0, 50, 75, 50, 51],
+    [17, -1, 0, 80, 85, 80, 81],
+    [18, -1, 0, 88, 93, 88, 89]
+  ],
+  "decorators": [],
+  "commenttexts": [],
+  "imports": [
+    [19, 0, 1, 0],
+    [5, 0, 2, 0],
+    [6, 0, 3, 0],
+    [12, 0, 4, 0]
+  ],
+  "comments": [],
+  "typehints": [
+    ["get_user", ["user_id", "int"], "Optional[User]"],
+    ["create_user", ["name", "str", "email", "str", "tags", "list"], "User"]
+  ],
+  "mutabledefaults": [
+    ["create_user", "app/services/user_service.py", 50, "tags", "[]", "list"]
+  ],
+  "sqlqueries": [
+    ["app/services/user_service.py", 28, "SELECT", false, "f\"SELECT * FROM users WHERE id = {user_id}\""]
+  ],
+  "hardcodedsecrets": [
+    ["app/services/user_service.py", 9, "API_KEY", "API_KEY = \"sk_live_12345\""]
+  ],
+  "loggingissues": [
+    ["get_user", "app/services/user_service.py", 27, false, "exception not logged"],
+    ["create_user", "app/services/user_service.py", 67, true, "ok"]
+  ],
+  "globalvars": [
+    ["API_KEY", "app/services/user_service.py", 9, false, "hardcoded secret"],
+    ["MAX_RETRIES", "app/services/user_service.py", 10, true, "constant - ok"],
+    ["db_connection", "app/services/user_service.py", 12, false, "mutable global variable"]
+  ],
+  "classdependencies": [
+    ["UserService", "app/services/user_service.py", [["database", "Database"]], []]
+  ],
+  "docstringformats": [
+    ["get_user", "app/services/user_service.py", "NumPy"],
+    ["create_user", "app/services/user_service.py", "NumPy"],
+    ["test_get_user", "app/services/user_service.py", "None"],
+    ["test_get_user_not_found", "app/services/user_service.py", "None"]
+  ],
+  "testcoverage": [
+    ["get_user", "app/services/user_service.py", ["test_get_user", "test_get_user_not_found"], 2]
+  ]
+}
