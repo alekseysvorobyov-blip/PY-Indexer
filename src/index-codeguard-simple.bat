@@ -1,0 +1,2 @@
+py main.py index D:\AI-CodeGuard\repo\CODE-GUARD\backend D:\AI-CodeGuard\repo\CODE-GUARD\Index
+py main.py location D:\AI-CodeGuard\repo\CODE-GUARD\Index D:\AI-CodeGuard\repo\CODE-GUARD\Index\tech-index.json

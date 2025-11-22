@@ -1,5 +1,22 @@
 # PY-Indexer v3.0 Dependencies
+# Install: pip install -r requirements.txt
+
+# TOML parsing for configuration (Python < 3.11)
+# tomllib is built-in for Python 3.11+
+tomli>=2.0.0; python_version < "3.11"
 
 # Optional: MessagePack serialization support
-# Uncomment if you want to use --format=msgpack
-# msgpack>=1.0.0
+# Install to enable --format=msgpack
+msgpack>=1.0.0
+
+# Note: All other dependencies are from Python standard library:
+# - ast (built-in)
+# - pathlib (built-in)
+# - dataclasses (built-in, Python 3.7+)
+# - logging (built-in)
+# - argparse (built-in)
+# - hashlib (built-in)
+# - datetime (built-in)
+# - json (built-in)
+# - gzip (built-in)
+# - base64 (built-in)
