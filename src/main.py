@@ -9,7 +9,7 @@ Generates 4 specialized indexes:
 - TECH-COMMENTS (code comments)
 
 Usage:
-    python main.py index <project_path> <output_path> [--minified]
+    python main.py index <project_path> <output_path> [--minified] [--html]
     python main.py view <index_path>
     python main.py help
 
@@ -42,7 +42,7 @@ class PyIndexer:
     Coordinates parsing, building, and serialization of all 4 index files.
     """
 
-    def __init__(self, project_path: str, output_path: str, minified: bool = False):
+    def __init__(self, project_path: str, output_path: str, minified: bool = False, generate_html: bool = False):
         """
         Initialize indexer.
 
@@ -54,12 +54,15 @@ class PyIndexer:
             Path to output directory
         minified : bool, optional
             Generate minified JSON versions (*-mini.json) (default: False)
+        generate_html : bool, optional
+            Generate interactive HTML viewer (index.html) (default: False)
         """
         self.logger = get_logger(__name__)
         self.config = get_config()
         self.project_path = Path(project_path).resolve()
         self.output_path = Path(output_path).resolve()
         self.minified = minified
+        self.generate_html = generate_html
 
         if not self.project_path.exists():
             raise FileNotFoundError(f"Project path not found: {self.project_path}")
@@ -79,6 +82,8 @@ class PyIndexer:
         self.logger.info(f"Initialized PyIndexer for project: {self.project_name}")
         if self.minified:
             self.logger.info("Minified mode enabled (will generate *-mini.json files)")
+        if self.generate_html:
+            self.logger.info("HTML viewer generation enabled (will create index.html)")
 
     def index_project(self) -> None:
         """
@@ -125,6 +130,10 @@ class PyIndexer:
         # Serialize to files
         self._serialize_indexes()
 
+
+        # Generate HTML viewer (optional)
+        if self.generate_html:
+            self._generate_html_viewer()
         self.logger.info("Indexing complete!")
 
     def _build_indexes(self, parsed_files: list) -> None:
@@ -418,6 +427,33 @@ class PyIndexer:
         print("\n" + "="*60)
 
 
+    def _generate_html_viewer(self) -> None:
+        """
+        Generate interactive HTML viewer.
+
+        Creates index.html with embedded JSON data and JavaScript UI.
+        """
+        self.logger.info("Generating HTML viewer...")
+
+        try:
+            from viewers.viewer_static_html import StaticHTMLViewer
+
+            viewer = StaticHTMLViewer(self.output_path)
+            html_file = viewer.generate(
+                self.index_data,
+                self.location_data,
+                self.docstrings_data,
+                self.comments_data
+            )
+
+            self.logger.info(f"HTML viewer created: {html_file}")
+
+        except Exception as e:
+            self.logger.error(f"Failed to generate HTML viewer: {e}", exc_info=True)
+            raise
+
+
+
 def view_index(index_path: str) -> None:
     """
     View index file contents.
@@ -448,7 +484,7 @@ def print_help() -> None:
 PY-Indexer v3.1 - Python Project Indexer
 
 USAGE:
-    python main.py index <project_path> <output_path> [--minified]
+    python main.py index <project_path> <output_path> [--minified] [--html]
     python main.py view <index_path>
     python main.py help
 
@@ -513,6 +549,12 @@ def main():
         help='Generate minified JSON versions (*-mini.json) [index command only]'
     )
 
+    parser.add_argument(
+        '--html',
+        action='store_true',
+        help='Generate interactive HTML viewer (index.html)'
+    )
+
     args = parser.parse_args()
 
     try:
@@ -527,7 +569,7 @@ def main():
             project_path = args.args[0]
             output_path = args.args[1]
 
-            indexer = PyIndexer(project_path, output_path, minified=args.minified)
+            indexer = PyIndexer(project_path, output_path, minified=args.minified, generate_html=args.html)
             indexer.index_project()
 
         elif args.command == 'view':
