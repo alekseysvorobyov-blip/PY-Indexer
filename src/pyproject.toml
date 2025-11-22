@@ -1,0 +1,39 @@
+[tool.py-indexer]
+# PY-Indexer v3.0 Configuration
+
+# Logging
+log_level = "DEBUG"
+log_file = "main.log"
+
+# Performance
+max_file_size = 1048576  # 1 MB in bytes
+max_ast_depth = 100
+
+# Hashing
+default_hash_length = 16  # 8, 16, 32, or 64
+
+# Output
+default_format = "json"  # json, json.gz, msgpack
+minify_output = false
+compress_names = false
+
+# Parsing
+encoding_fallbacks = ["utf-8", "cp1251", "latin-1"]
+parse_timeout = 30  # seconds
+
+[project]
+name = "py-indexer"
+version = "3.0.0"
+description = "Compact Python project indexer for AI analysis"
+requires-python = ">=3.10"
+authors = [
+    {name = "PY-Indexer Development Team"}
+]
+license = {text = "Proprietary"}
+
+[project.optional-dependencies]
+msgpack = ["msgpack>=1.0.0"]
+
+[build-system]
+requires = ["setuptools>=45", "wheel"]
+build-backend = "setuptools.build_meta"

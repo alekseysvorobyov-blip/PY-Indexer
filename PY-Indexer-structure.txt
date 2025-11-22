@@ -1,0 +1,82 @@
+============================================================
+ PROJECT STRUCTURE: PY-Indexer
+============================================================
+
+Generated: 22.11.2025 15:07:07,89
+Path: D:\AI\PY-Indexer\repo\PY-Indexer
+
+Excluded directories: node_modules .git .venv __pycache__ .idea .vscode bin obj target build dist
+
+============================================================
+
+Folder PATH listing
+Volume serial number is FC25-66D4
+D:.
+|   export-structure-advanced.bat
+|   PY-Indexer-structure-temp.txt
+|   PY-Indexer-structure.txt
+|   
++---old
+|   +---examples
+|   +---indexer
+|   |       run.bat
+|   |       run.md
+|   |       run_BL.bat
+|   |       TECH-INDEX-PY-v2.1-schema.json
+|   |       tech_index_generator_v3.py
+|   |       
+|   \---location
+|           LOCATION-EXAMPLES-v2.txt
+|           location_index_builder_v2.py
+|           run.bat
+|           run_BL.bat
+|           tech-location-schema-v2.json
+|           TECH-LOCATION-v2-SPEC.md
+|           
++---specification
+|       example-index-v3.json
+|       example-location-v3.json
+|       index-extension-spec.md
+|       schema_analysis.json
+|       tech-index-v3-schema.json
+|       tech-location-v3-schema.json
+|       
+\---src
+ 
+============================================================ 
+ FILES BY EXTENSION 
+============================================================ 
+ 
+.md files: 3 
+.json files: 7 
+.txt files: 3 
+.bat files: 5 
+.py files: 2 
+ 
+============================================================ 
+ STATISTICS 
+============================================================ 
+ 
+Directories: 42 
+Files: 73 
+Total size: 256786 bytes 
+Total size: 0 MB 
+ 
+============================================================ 
+ LARGEST FILES (TOP 10) 
+============================================================ 
+ 
+Volume Serial Number is FC25-66D4 
+03.11.2025  16:02             4 426 export-structure-advanced.bat 
+22.11.2025  15:07             1 863 PY-Indexer-structure.txt 
+22.11.2025  15:07               850 PY-Indexer-structure-temp.txt 
+22.11.2025  15:06             1 902 index 
+22.11.2025  15:03               310 config 
+22.11.2025  15:03               112 packed-refs 
+22.11.2025  15:03                73 description 
+22.11.2025  15:03                25 smartgit.config 
+22.11.2025  15:03                21 HEAD 
+ 
+============================================================ 
+End of structure export 
+============================================================ 

@@ -1,0 +1,5 @@
+# PY-Indexer v3.0 Dependencies
+
+# Optional: MessagePack serialization support
+# Uncomment if you want to use --format=msgpack
+# msgpack>=1.0.0
