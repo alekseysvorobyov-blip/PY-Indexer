@@ -1,206 +1,487 @@
 # PY-Indexer v3.1
 
-**Compact Python Project Indexer for AI Analysis**
+Генератор компактных индексов Python проектов для AI-анализа.
 
-Generates ultra-compact structured indexes of Python codebases with **separation of concerns architecture**.
-
----
-
-## 🎯 What It Does
-
-Converts **5 GB** of Python code → **~4 MB** of structured JSON indexes:
-
-```
-your_project/        TECH-INDEX       (Structure: What?)
-├── 1000+ files  →  tech-index.json         ~2 MB
-├── Classes          TECH-LOCATION    (Coordinates: Where?)
-├── Functions   →   tech-location.json      ~500 KB
-├── Imports          TECH-DOCSTRINGS  (Documentation)
-└── Types       →   tech-docstrings.json    ~1 MB
-                     TECH-COMMENTS    (Code Comments)
-                →   tech-comments.json       ~300 KB
-```
+Создаёт 4 специализированных индекса:
+- **TECH-INDEX** — структура кода (классы, функции, типы)
+- **TECH-LOCATION** — координаты (номера строк)
+- **TECH-DOCSTRINGS** — строки документации
+- **TECH-COMMENTS** — комментарии в коде
 
 ---
 
-## 🚀 Quick Start
+## ✨ Особенности v3.1
 
-### Installation
+- ✅ **4 отдельных файла** по принципу Separation of Concerns
+- ✅ **location_id** как единый ключ связи между индексами
+- ✅ **Нормализация данных** через словари (names, files, text)
+- ✅ **Компактные массивы** вместо объектов
+- ✅ **Минификация** — опциональный режим генерации сжатых JSON (без отступов)
+
+---
+
+## 📦 Требования
+
+- Python 3.10+
+- Зависимости из `requirements.txt`
+
+---
+
+## 🚀 Установка
+
 ```bash
-# Clone repository
-git clone https://github.com/your/py-indexer.git
-cd py-indexer
-
-# Install dependencies
 pip install -r requirements.txt
 ```
 
-### Basic Usage
-```bash
-# Generate all indexes
-python main.py index ./your_project ./output
+---
 
-# Generates:
-# - tech-index.json (structure)
-# - tech-location.json (coordinates)
-# - tech-docstrings.json (documentation)
-# - tech-comments.json (comments)
+## 📖 Быстрый старт
+
+### **1. Генерация индексов (обычный формат)**
+
+```bash
+python main.py index ./my_project ./output
 ```
+
+**Создаст 4 файла:**
+- `tech-index.json` (pretty-printed)
+- `tech-location.json` (pretty-printed)
+- `tech-docstrings.json` (pretty-printed)
+- `tech-comments.json` (pretty-printed)
 
 ---
 
-## 📊 Architecture v3.1
+### **2. Генерация с минификацией**
 
-### **Separation of Concerns**
-
-| File | Responsibility | Size | Use Case |
-|------|---------------|------|----------|
-| **TECH-INDEX** | Code structure (classes, functions, types) | ~2 MB | AI/LLM analysis |
-| **TECH-LOCATION** | File coordinates (line numbers) | ~500 KB | Navigation, IDE integration |
-| **TECH-DOCSTRINGS** | Documentation strings | ~1 MB | Documentation generation |
-| **TECH-COMMENTS** | Code comments | ~300 KB | Code review, TODOs |
-
-### **Key Innovation: location_id**
-
-All files linked by `location_id` - single source of truth:
-
-```python
-# INDEX: What is it?
-classes[0] = [0, [], 1, 42]  # name_idx, bases, file_idx, location_id
-
-# LOCATION: Where is it?
-classes[0] = [42, 1, 23, 56]  # location_id, file_idx, line_start, line_end
-
-# DOCSTRINGS: What's documented?
-classes[0] = [42, [[1, 1, 24, 25]]]  # location_id, [[text_idx, file, lines]]
-
-# Linked by location_id = 42
+```bash
+python main.py index ./my_project ./output --minified
 ```
+
+**Создаст 8 файлов:**
+- `tech-index.json` (pretty-printed, indent=2)
+- `tech-index-mini.json` (minified, no whitespace)
+- `tech-location.json` (pretty-printed)
+- `tech-location-mini.json` (minified)
+- `tech-docstrings.json` (pretty-printed)
+- `tech-docstrings-mini.json` (minified)
+- `tech-comments.json` (pretty-printed)
+- `tech-comments-mini.json` (minified)
 
 ---
 
-## 📝 Examples
+### **3. Просмотр индекса**
 
-### Generate Indexes
 ```bash
-# Full project indexing
+python main.py view ./output/tech-index.json
+```
+
+Выводит содержимое индекса в читаемом формате.
+
+---
+
+### **4. Справка**
+
+```bash
+python main.py help
+```
+
+Показывает полную справку по использованию.
+
+---
+
+## 🎮 Команды
+
+### **index** — Индексация проекта
+
+```bash
+python main.py index <project_path> <output_path> [--minified]
+```
+
+**Параметры:**
+- `project_path` — путь к Python-проекту
+- `output_path` — директория для сохранения индексов
+- `--minified` — создать минифицированные версии (опционально)
+
+**Примеры:**
+```bash
+# Обычный режим
 python main.py index ./backend ./output
 
-# Custom options
-python main.py index ./backend ./output --format=json.gz --hash-len=32
+# С минификацией
+python main.py index ./backend ./output --minified
+
+# Абсолютные пути (Windows)
+python main.py index D:/projects/myapp ./output --minified
 ```
 
-### View Results
+---
+
+### **view** — Просмотр индекса
+
 ```bash
-# View structure
+python main.py view <index_path>
+```
+
+**Параметры:**
+- `index_path` — путь к JSON-файлу индекса
+
+**Примеры:**
+```bash
 python main.py view ./output/tech-index.json
-
-# Filter by type
-python main.py view ./output/tech-index.json --filter=classes
+python main.py view ./output/tech-location-mini.json
 ```
 
 ---
 
-## 🔧 Features
+### **help** — Справка
 
-✅ **Compact Format** - 500x compression (5 GB → 4 MB)  
-✅ **Separation of Concerns** - Structure/Location/Docs/Comments split  
-✅ **Type Hints** - Full parameter and return type support  
-✅ **Decorators** - Tracks all decorators  
-✅ **Multiple Formats** - JSON, GZIP, MessagePack  
-✅ **Security Analysis** - Detects SQL injections, hardcoded secrets  
-✅ **Python 3.10+** - Modern Python support  
+```bash
+python main.py help
+```
+
+Выводит подробную справку по использованию.
 
 ---
 
-## 📚 Documentation
+## 📂 Выходные файлы
 
-- **[ARCHITECTURE.md](ARCHITECTURE.md)** - Detailed architecture v3.1
-- **[EXAMPLES-v3.1.md](EXAMPLES-v3.1.md)** - Usage examples
-- **[Schemas](schemas/)** - JSON schemas for all formats
+### **Обычный формат (всегда генерируется)**
+
+| Файл | Размер* | Описание |
+|------|---------|----------|
+| `tech-index.json` | ~2 MB | Структура кода (классы, функции, типы) |
+| `tech-location.json` | ~500 KB | Координаты элементов (номера строк) |
+| `tech-docstrings.json` | ~1 MB | Строки документации с координатами |
+| `tech-comments.json` | ~300 KB | Комментарии с координатами |
+
+\* Для проекта из 1000 файлов
 
 ---
 
-## 🎨 Use Cases
+### **Минифицированный формат (с флагом `--minified`)**
 
-### For AI/LLM
+| Файл | Размер* | Экономия |
+|------|---------|----------|
+| `tech-index-mini.json` | ~1 MB | ~50% |
+| `tech-location-mini.json` | ~250 KB | ~50% |
+| `tech-docstrings-mini.json` | ~500 KB | ~50% |
+| `tech-comments-mini.json` | ~150 KB | ~50% |
+
+\* Для проекта из 1000 файлов
+
+**Минификация:**
+- Убирает все пробелы и переносы строк
+- Использует `separators=(',', ':')`
+- JSON остаётся валидным и парсится стандартными инструментами
+- Идеален для передачи по сети или хранения
+
+---
+
+## 📊 Примеры данных
+
+### **tech-index.json** (структура)
+
+```json
+{
+  "meta": {
+    "version": "3.1",
+    "generated": "2025-11-22T15:00:00Z",
+    "project": "my_backend"
+  },
+  "names": ["UserService", "get_user", "create_user", "user_id", "int"],
+  "files": ["app/services/user_service.py"],
+  "modules": [[0, 0]],
+  "classes": [[0, [], 0]],
+  "functions": [[1, 0, 0], [2, 0, 0]],
+  "typehints": {
+    "1": {
+      "params": [[3, 4]],
+      "return": 5
+    }
+  }
+}
+```
+
+---
+
+### **tech-location.json** (координаты)
+
+```json
+{
+  "meta": {
+    "version": "3.1",
+    "generated": "2025-11-22T15:00:00Z",
+    "project": "my_backend"
+  },
+  "files": ["app/services/user_service.py"],
+  "modules": [[0, 0, 1, 150]],
+  "classes": [[0, 0, 10, 50]],
+  "functions": [
+    [1, 0, 25, 35],
+    [2, 0, 40, 48]
+  ]
+}
+```
+
+---
+
+### **tech-docstrings.json** (документация)
+
+```json
+{
+  "meta": {
+    "version": "3.1",
+    "generated": "2025-11-22T15:00:00Z",
+    "project": "my_backend"
+  },
+  "docstrings_text": [
+    "Get user by ID.",
+    "Create new user."
+  ],
+  "modules": [[0, [[0, 0, 1, 3]]]],
+  "functions": [
+    [1, [[0, 0, 26, 27]]],
+    [2, [[1, 0, 41, 42]]]
+  ]
+}
+```
+
+---
+
+### **tech-comments.json** (комментарии)
+
+```json
+{
+  "meta": {
+    "version": "3.1",
+    "generated": "2025-11-22T15:00:00Z",
+    "project": "my_backend"
+  },
+  "comments_text": [
+    "TODO: Add caching",
+    "FIXME: Handle edge case"
+  ],
+  "modules": [[0, [[0, 0, 15], [1, 0, 30]]]],
+  "functions": []
+}
+```
+
+---
+
+## 🔗 Связь через location_id
+
+Все 4 индекса используют **location_id** как универсальный ключ:
+
 ```python
-# Feed compact TECH-INDEX to ChatGPT
-with open("tech-index.json") as f:
-    index = json.load(f)
-# AI analyzes entire codebase in single context
+# INDEX: Функция с именем "get_user"
+functions[0] = [name_idx=1, parent_idx=0, file_idx=0]  # location_id=10
+
+# LOCATION: Координаты функции location_id=10
+functions[0] = [location_id=10, file_idx=0, line_start=25, line_end=35]
+
+# DOCSTRINGS: Документация функции location_id=10
+functions[0] = [location_id=10, [[text_idx=0, file_idx=0, line_start=26, line_end=27]]]
+
+# COMMENTS: Комментарии функции location_id=10
+functions[0] = [location_id=10, [[text_idx=5, file_idx=0, line=28]]]
 ```
 
-### For IDEs
-```python
-# Use LOCATION for navigation
-def goto_definition(name):
-    loc_id = find_in_index(name)
-    coords = location["classes"][loc_id]
-    open_file(coords[1], coords[2])  # file, line
-```
-
-### For Documentation
-```python
-# Generate docs from DOCSTRINGS
-for class_data in docstrings["classes"]:
-    loc_id = class_data[0]
-    docs = class_data[1]
-    generate_docs(loc_id, docs)
-```
+**location_id=10 связывает всё вместе!**
 
 ---
 
-## 🔬 Technical Details
-
-**Supported:**
-- Python 3.10, 3.11, 3.12+
-- Type hints (Union, Optional, Generics)
-- Async/await
-- Decorators with arguments
-- Multiple inheritance
-- Relative imports
-
-**Formats:**
-- JSON (human-readable)
-- JSON.gz (compressed)
-- MessagePack (binary, fastest)
-
----
-
-## 📦 Output Files
+## 🗂️ Структура проекта
 
 ```
-output/
-├── tech-index.json         # Structure (classes, functions, types)
-├── tech-location.json      # Coordinates (file:line mappings)
-├── tech-docstrings.json    # Documentation strings
-└── tech-comments.json      # Code comments
+src/
+├── main.py                  # Entry point (CLI)
+├── parser.py                # AST-парсер Python
+├── config_loader.py         # Конфигурация
+├── builders/                # Построители индексов
+│   ├── builder_tech_index.py
+│   ├── builder_location.py
+│   ├── builder_docstrings.py
+│   └── builder_comments.py
+├── utils/                   # Утилиты
+│   ├── utils_logger.py
+│   └── utils_file.py
+└── schemas/                 # JSON Schema v3.1
+    ├── tech-index-v3.1-schema.json
+    ├── tech-location-v3.1-schema.json
+    ├── tech-docstrings-v3.1-schema.json
+    └── tech-comments-v3.1-schema.json
 ```
 
 ---
 
-## 🤝 Contributing
+## 📝 Логирование
 
-1. Fork repository
-2. Create feature branch
-3. Follow coding standards (see `python-assistant-core.md`)
-4. Submit PR
+Все операции записываются в **main.log** с уровнем DEBUG.
 
----
-
-## 📄 License
-
-MIT License - See LICENSE file
-
----
-
-## 🔗 Links
-
-- **GitHub**: https://github.com/your/py-indexer
-- **Issues**: https://github.com/your/py-indexer/issues
-- **Docs**: https://py-indexer.readthedocs.io
+**Формат:**
+```
+2025-11-22 17:51:10,323 - __main__ - INFO - Starting indexing: ./backend
+2025-11-22 17:51:10,328 - __main__ - INFO - Found 40 Python files
+2025-11-22 17:51:11,152 - __main__ - INFO - Parsed 40 files successfully
+2025-11-22 17:51:11,200 - __main__ - INFO - Wrote: tech-index.json (pretty-printed, 1.85 MB)
+2025-11-22 17:51:11,215 - __main__ - INFO - Wrote: tech-index-mini.json (minified, 0.92 MB)
+```
 
 ---
 
-**PY-Indexer v3.1** - Compact. Structured. AI-Ready.
+## 🎯 Сценарии использования
+
+### **1. Анализ AI/LLM**
+
+```bash
+# Генерировать компактные индексы для подачи в LLM
+python main.py index ./project ./output --minified
+
+# Отправить tech-index-mini.json в AI для анализа архитектуры
+```
+
+---
+
+### **2. Навигация по коду**
+
+```bash
+# Генерировать с координатами
+python main.py index ./project ./output
+
+# Использовать tech-location.json для "Go to Definition"
+```
+
+---
+
+### **3. Генерация документации**
+
+```bash
+# Извлечь все docstrings
+python main.py index ./project ./output
+
+# Обработать tech-docstrings.json для API docs
+```
+
+---
+
+### **4. Анализ комментариев**
+
+```bash
+# Найти TODO/FIXME
+python main.py index ./project ./output
+
+# Парсить tech-comments.json для отслеживания задач
+```
+
+---
+
+## ⚙️ Производительность
+
+### **Скорость парсинга**
+
+- ~100-200 файлов/секунду
+- ~1 миллион строк/минуту
+- Зависит от сложности кода
+
+### **Размеры файлов (проект 1000 файлов)**
+
+| Режим | INDEX | LOCATION | DOCSTRINGS | COMMENTS | **Всего** |
+|-------|-------|----------|------------|----------|-----------|
+| **Обычный** | 2.0 MB | 0.5 MB | 1.0 MB | 0.3 MB | **3.8 MB** |
+| **Минифицированный** | 1.0 MB | 0.25 MB | 0.5 MB | 0.15 MB | **1.9 MB** |
+
+**Экономия при минификации: ~50%**
+
+---
+
+## 🛠️ Устранение неполадок
+
+### **Проблема:** Ошибка `FileNotFoundError`
+
+**Решение:** Проверьте, что путь к проекту существует и доступен.
+
+```bash
+# Абсолютный путь (надёжнее)
+python main.py index D:/projects/myapp ./output
+```
+
+---
+
+### **Проблема:** Парсинг не находит файлы
+
+**Решение:** Проверьте логи в `main.log`. Убедитесь, что в директории есть `.py` файлы.
+
+```bash
+# Посмотреть логи
+cat main.log | grep "Found"
+```
+
+---
+
+### **Проблема:** Файлы слишком большие
+
+**Решение:** Используйте `--minified` для экономии места.
+
+```bash
+python main.py index ./project ./output --minified
+```
+
+---
+
+## 📚 Дополнительная документация
+
+- **ARCHITECTURE.md** — подробная архитектура проекта
+- **README.v.3.1.md** — спецификация формата v3.1
+- **JSON Schemas** — валидация структуры данных
+
+---
+
+## 🔄 Миграция с v3.0
+
+### **Изменения в v3.1**
+
+1. ✅ **CLI упрощён** — теперь без модуля `cli/`
+2. ✅ **Команды изменены:**
+   - ~~`python -m cli.cli_index`~~ → `python main.py index`
+   - ~~`--project-path`~~ → позиционный аргумент
+   - ~~`--output-path`~~ → позиционный аргумент
+3. ✅ **Новая опция:** `--minified` для генерации сжатых версий
+4. ❌ **Удалены опции:** `--format`, `--compress-names`, `--hash-length`
+
+### **Старый синтаксис (v3.0):**
+
+```bash
+python -m cli.cli_index --project-path ./project --output-path ./output --minify
+```
+
+### **Новый синтаксис (v3.1):**
+
+```bash
+python main.py index ./project ./output --minified
+```
+
+---
+
+## 📄 Лицензия
+
+Proprietary. Все права защищены.
+
+---
+
+## 👤 Автор
+
+PY-Indexer Development Team  
+Дата релиза: 2025-11-22
+
+---
+
+## 🆘 Поддержка
+
+При возникновении проблем:
+1. Проверьте `main.log` для диагностики
+2. Убедитесь, что используете Python 3.10+
+3. Обновите зависимости: `pip install -r requirements.txt`
+
+---
+
+**PY-Indexer v3.1** — Простой. Быстрый. AI-Ready. 🚀
