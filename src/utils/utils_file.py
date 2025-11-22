@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-File utilities for PY-Indexer v3.0 - UPDATED with file size protection.
+File utilities for PY-Indexer v3.0.
 
 Provides file operations with:
 - Multiple encoding fallback (UTF-8, CP1251, Latin-1)
@@ -25,6 +25,31 @@ logger = get_logger(__name__)
 
 # Default max file size (1 MB) - can be overridden from config
 DEFAULT_MAX_FILE_SIZE = 1048576  # 1 MB in bytes
+
+
+def _validate_file_exists(path: Path) -> None:
+    """
+    Validate file exists and is a regular file.
+    
+    Parameters
+    ----------
+    path : Path
+        Path to validate
+        
+    Raises
+    ------
+    FileNotFoundError
+        If file doesn't exist
+    ValueError
+        If path is not a regular file
+    """
+    if not path.exists():
+        logger.error(f"File not found: {path}")
+        raise FileNotFoundError(f"File not found: {path}")
+    
+    if not path.is_file():
+        logger.error(f"Not a file: {path}")
+        raise ValueError(f"Not a file: {path}")
 
 
 def read_python_file(file_path: str | Path, max_size: int = DEFAULT_MAX_FILE_SIZE) -> str:
@@ -64,14 +89,7 @@ def read_python_file(file_path: str | Path, max_size: int = DEFAULT_MAX_FILE_SIZ
     2048000
     """
     path = Path(file_path)
-    
-    if not path.exists():
-        logger.error(f"File not found: {path}")
-        raise FileNotFoundError(f"File not found: {path}")
-    
-    if not path.is_file():
-        logger.error(f"Not a file: {path}")
-        raise ValueError(f"Not a file: {path}")
+    _validate_file_exists(path)
     
     # Check file size BEFORE reading
     file_size = path.stat().st_size
@@ -121,6 +139,8 @@ def ensure_directory(path: str | Path) -> None:
     ------
     OSError
         If directory cannot be created
+    ValueError
+        If path exists but is not a directory
         
     Examples
     --------
@@ -144,7 +164,7 @@ def ensure_directory(path: str | Path) -> None:
         raise
 
 
-def get_file_hash(file_path: str | Path, algorithm: str = 'sha256') -> str:
+def get_file_hash(file_path: str | Path, algorithm: str = 'sha256', length: Optional[int] = None) -> str:
     """
     Calculate file hash.
     
@@ -154,11 +174,13 @@ def get_file_hash(file_path: str | Path, algorithm: str = 'sha256') -> str:
         Path to file
     algorithm : str, optional
         Hash algorithm: 'sha256', 'md5', 'sha1' (default: 'sha256')
+    length : int, optional
+        Truncate hash to this length (default: full hash)
         
     Returns
     -------
     str
-        Hexadecimal hash string
+        Hexadecimal hash string (truncated if length specified)
         
     Raises
     ------
@@ -172,16 +194,13 @@ def get_file_hash(file_path: str | Path, algorithm: str = 'sha256') -> str:
     >>> hash_val = get_file_hash("module.py")
     >>> print(hash_val)
     'a3c5f7...'
+    
+    >>> short_hash = get_file_hash("module.py", length=16)
+    >>> print(len(short_hash))
+    16
     """
     path = Path(file_path)
-    
-    if not path.exists():
-        logger.error(f"File not found: {path}")
-        raise FileNotFoundError(f"File not found: {path}")
-    
-    if not path.is_file():
-        logger.error(f"Not a file: {path}")
-        raise ValueError(f"Not a file: {path}")
+    _validate_file_exists(path)
     
     supported_algorithms = ['sha256', 'md5', 'sha1']
     if algorithm not in supported_algorithms:
@@ -195,6 +214,11 @@ def get_file_hash(file_path: str | Path, algorithm: str = 'sha256') -> str:
                 hash_obj.update(chunk)
         
         hash_value = hash_obj.hexdigest()
+        
+        # Truncate if length specified
+        if length and length > 0:
+            hash_value = hash_value[:length]
+        
         logger.debug(f"Calculated {algorithm} hash for {path}: {hash_value[:16]}...")
         return hash_value
     except Exception as e:
@@ -234,10 +258,7 @@ def get_file_modified(file_path: str | Path, iso_format: bool = True) -> str:
     '2025-11-22 15:30:45'
     """
     path = Path(file_path)
-    
-    if not path.exists():
-        logger.error(f"File not found: {path}")
-        raise FileNotFoundError(f"File not found: {path}")
+    _validate_file_exists(path)
     
     try:
         timestamp = path.stat().st_mtime
@@ -281,14 +302,7 @@ def get_file_size(file_path: str | Path) -> int:
     File size: 2048 bytes
     """
     path = Path(file_path)
-    
-    if not path.exists():
-        logger.error(f"File not found: {path}")
-        raise FileNotFoundError(f"File not found: {path}")
-    
-    if not path.is_file():
-        logger.error(f"Not a file: {path}")
-        raise ValueError(f"Not a file: {path}")
+    _validate_file_exists(path)
     
     try:
         size = path.stat().st_size

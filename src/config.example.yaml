@@ -1,0 +1,121 @@
+# PY-Indexer v3.0 - Example Configuration
+# Copy this file to your project and customize as needed
+
+# Logging Configuration
+logging:
+  level: DEBUG  # DEBUG, INFO, WARNING, ERROR, CRITICAL
+  file: main.log
+  console: true
+
+# File Processing
+file_processing:
+  # Maximum file size to process (in bytes)
+  # Default: 1048576 (1 MB)
+  # Increase if you have large Python files
+  max_file_size: 1048576
+  
+  # Encoding fallback order
+  # Try UTF-8 first, then CP1251 (Cyrillic), then Latin-1
+  encoding_fallbacks:
+    - utf-8
+    - cp1251
+    - latin-1
+  
+  # Timeout for parsing single file (in seconds)
+  parse_timeout: 30
+
+# AST Parsing
+ast_parsing:
+  # Maximum AST depth to prevent infinite recursion
+  max_depth: 100
+
+# Hashing
+hashing:
+  # Default hash length: 8, 16, 32, or 64 characters
+  default_length: 16
+  
+  # Hash algorithm: sha256, md5, sha1
+  algorithm: sha256
+
+# Output Formats
+output:
+  # Default format: json, json.gz, msgpack
+  default_format: json
+  
+  # Minify JSON output (remove whitespace)
+  minify: false
+  
+  # Compress names array with GZIP+Base64
+  compress_names: false
+
+# Code Analysis
+analysis:
+  # Detect mutable default arguments
+  check_mutable_defaults: true
+  
+  # Detect SQL injection risks (f-strings in SQL)
+  check_sql_injections: true
+  
+  # Detect hardcoded secrets (API keys, passwords, tokens)
+  check_hardcoded_secrets: true
+  
+  # Analyze logging usage
+  check_logging_usage: true
+  
+  # Check for missing type hints
+  check_type_hints: true
+  
+  # Check for missing docstrings
+  check_docstrings: true
+  
+  # Analyze class dependencies (Dependency Injection)
+  check_class_dependencies: true
+
+# Performance
+performance:
+  # Enable parallel processing (experimental)
+  parallel: false
+  
+  # Number of worker threads (0 = auto)
+  workers: 0
+
+# Exclusions
+exclusions:
+  # Directories to skip
+  directories:
+    - __pycache__
+    - .git
+    - .venv
+    - venv
+    - env
+    - node_modules
+    - .pytest_cache
+    - .mypy_cache
+  
+  # File patterns to skip
+  file_patterns:
+    - "*_test.py"
+    - "test_*.py"
+    - "*conftest.py"
+
+# Project Metadata
+project:
+  # Project name (auto-detected from directory if not set)
+  name: ""
+  
+  # Project version
+  version: "1.0.0"
+  
+  # Project description
+  description: ""
+
+# Advanced Options
+advanced:
+  # Enable experimental features
+  experimental: false
+  
+  # Verbose output
+  verbose: false
+  
+  # Dry run (don't write files)
+  dry_run: false

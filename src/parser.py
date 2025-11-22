@@ -2,7 +2,7 @@
 """
 AST Parser for PY-Indexer v3.0.
 
-Parses Python files into structured data:
+Parses Python files into structured data with config support:
 - Modules
 - Classes (with inheritance, attributes, methods)
 - Functions (with parameters, type hints, defaults)
@@ -20,6 +20,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Optional
 
+from config_loader import get_config
 from utils.utils_logger import get_logger
 from utils.utils_file import read_python_file
 
@@ -112,16 +113,19 @@ class ASTParser:
     """
     Python AST parser for PY-Indexer.
     
-    Extracts structured information from Python source files.
+    Extracts structured information from Python source files using config settings.
     """
     
     def __init__(self):
-        """Initialize parser."""
+        """Initialize parser with config."""
         self.logger = get_logger(__name__)
+        self.config = get_config()
     
     def parse_file(self, file_path: str | Path) -> Optional[ParsedFile]:
         """
         Parse Python file into structured data.
+        
+        Uses max_file_size from config for file size validation.
         
         Parameters
         ----------
@@ -141,7 +145,8 @@ class ASTParser:
         5
         """
         try:
-            content = read_python_file(file_path)
+            # Read file with config max_file_size
+            content = read_python_file(file_path, max_size=self.config.max_file_size)
             tree = ast.parse(content, filename=str(file_path))
             
             file_path_obj = Path(file_path)
@@ -178,6 +183,10 @@ class ASTParser:
             
         except SyntaxError as e:
             self.logger.error(f"Syntax error in {file_path}: {e}", exc_info=True)
+            return None
+        except ValueError as e:
+            # File too large or encoding error
+            self.logger.error(f"File validation error in {file_path}: {e}", exc_info=True)
             return None
         except Exception as e:
             self.logger.error(f"Error parsing {file_path}: {e}", exc_info=True)
