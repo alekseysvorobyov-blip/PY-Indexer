@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PY-Indexer v3.1 Viewer</title>
+    <style>
+        :root {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f5f5f5;
+            --bg-hover: #e8e8e8;
+            --text-primary: #1a1a1a;
+            --text-secondary: #666666;
+            --border-color: #dddddd;
+            --accent-color: #007bff;
+            --accent-hover: #0056b3;
+            --sidebar-width: 300px;
+        }
+
+        [data-theme="dark"] {
+            --bg-primary: #1e1e1e;
+            --bg-secondary: #2d2d2d;
+            --bg-hover: #3a3a3a;
+            --text-primary: #e0e0e0;
+            --text-secondary: #a0a0a0;
+            --border-color: #404040;
+            --accent-color: #4a9eff;
+            --accent-hover: #66b0ff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .container {
+            display: flex;
+            height: 100vh;
+        }
+
+        .sidebar {
+            width: var(--sidebar-width);
+            background: var(--bg-secondary);
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .header {
+            padding: 16px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .header h1 {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .controls {
+            padding: 12px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .search-box {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+
+        .filter-tabs {
+            display: flex;
+            gap: 4px;
+            flex-wrap: wrap;
+        }
+
+        .filter-tab {
+            padding: 6px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .filter-tab:hover {
+            background: var(--bg-hover);
+        }
+
+        .filter-tab.active {
+            background: var(--accent-color);
+            color: white;
+            border-color: var(--accent-color);
+        }
+
+        .tree {
+            flex: 1;
+            overflow-y: auto;
+            padding: 8px;
+        }
+
+        .tree-item {
+            padding: 6px 8px;
+            cursor: pointer;
+            border-radius: 4px;
+            font-size: 13px;
+            user-select: none;
+            transition: background 0.15s;
+        }
+
+        .tree-item:hover {
+            background: var(--bg-hover);
+        }
+
+        .tree-item.selected {
+            background: var(--accent-color);
+            color: white;
+        }
+
+        .tree-item .icon {
+            margin-right: 6px;
+        }
+
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .toolbar {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .theme-toggle {
+            padding: 6px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.2s;
+        }
+
+        .theme-toggle:hover {
+            background: var(--bg-hover);
+        }
+
+        .detail-panel {
+            flex: 1;
+            overflow-y: auto;
+            padding: 24px;
+        }
+
+        .detail-panel h2 {
+            font-size: 24px;
+            margin-bottom: 16px;
+        }
+
+        .detail-panel h3 {
+            font-size: 16px;
+            margin-top: 24px;
+            margin-bottom: 12px;
+            color: var(--text-secondary);
+        }
+
+        .detail-section {
+            margin-bottom: 24px;
+        }
+
+        .detail-row {
+            padding: 8px 0;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .detail-row strong {
+            color: var(--text-secondary);
+            margin-right: 8px;
+        }
+
+        .code-block {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            padding: 12px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            overflow-x: auto;
+            margin: 8px 0;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 500;
+            margin-right: 4px;
+        }
+
+        .badge-file { background: #e3f2fd; color: #1976d2; }
+        .badge-class { background: #f3e5f5; color: #7b1fa2; }
+        .badge-function { background: #e8f5e9; color: #388e3c; }
+        .badge-module { background: #fff3e0; color: #f57c00; }
+
+        [data-theme="dark"] .badge-file { background: #1e3a5f; color: #64b5f6; }
+        [data-theme="dark"] .badge-class { background: #4a148c; color: #ce93d8; }
+        [data-theme="dark"] .badge-function { background: #1b5e20; color: #81c784; }
+        [data-theme="dark"] .badge-module { background: #e65100; color: #ffb74d; }
+
+        .empty-state {
+            text-align: center;
+            padding: 64px 24px;
+            color: var(--text-secondary);
+        }
+
+        .empty-state h3 {
+            font-size: 18px;
+            margin-bottom: 8px;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .stat-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 16px;
+        }
+
+        .stat-card .value {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .stat-card .label {
+            font-size: 12px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <aside class="sidebar">
+            <div class="header">
+                <h1>PY-Indexer v3.1</h1>
+                <p id="project-name">Loading...</p>
+            </div>
+            <div class="controls">
+                <input 
+                    type="text" 
+                    class="search-box" 
+                    id="search-input" 
+                    placeholder="Search..."
+                >
+                <div class="filter-tabs">
+                    <button class="filter-tab active" data-filter="all">All</button>
+                    <button class="filter-tab" data-filter="files">Files</button>
+                    <button class="filter-tab" data-filter="classes">Classes</button>
+                    <button class="filter-tab" data-filter="functions">Functions</button>
+                </div>
+            </div>
+            <div class="tree" id="tree"></div>
+        </aside>
+
+        <main class="main-content">
+            <div class="toolbar">
+                <div id="breadcrumb"></div>
+                <button class="theme-toggle" id="theme-toggle">🌙 Dark Mode</button>
+            </div>
+            <div class="detail-panel" id="detail-panel">
+                <div class="empty-state">
+                    <h3>Welcome to PY-Indexer Viewer</h3>
+                    <p>Select an item from the sidebar to view details</p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Embedded JSON data (replaced by Python generator)
+        const INDEX_DATA = {{INDEX_DATA}};
+        const LOCATION_DATA = {{LOCATION_DATA}};
+        const DOCSTRINGS_DATA = {{DOCSTRINGS_DATA}};
+        const COMMENTS_DATA = {{COMMENTS_DATA}};
+
+        // State
+        let currentFilter = 'all';
+        let searchQuery = '';
+        let selectedItem = null;
+
+        // Theme
+        function initTheme() {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+            updateThemeButton(savedTheme);
+        }
+
+        function toggleTheme() {
+            const current = document.documentElement.getAttribute('data-theme');
+            const newTheme = current === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            updateThemeButton(newTheme);
+        }
+
+        function updateThemeButton(theme) {
+            const btn = document.getElementById('theme-toggle');
+            btn.textContent = theme === 'dark' ? '☀️ Light Mode' : '🌙 Dark Mode';
+        }
+
+        // Build tree items
+        function buildTreeItems() {
+            const items = [];
+
+            // Files
+            if (INDEX_DATA.files) {
+                INDEX_DATA.files.forEach((file, idx) => {
+                    items.push({
+                        type: 'file',
+                        name: file,
+                        id: `file-${idx}`,
+                        fileIdx: idx
+                    });
+                });
+            }
+
+            // Classes
+            if (INDEX_DATA.classes) {
+                INDEX_DATA.classes.forEach((cls, idx) => {
+                    const nameIdx = cls[0];
+                    const name = INDEX_DATA.names[nameIdx];
+                    const fileIdx = cls[2];
+                    const file = INDEX_DATA.files[fileIdx];
+                    
+                    items.push({
+                        type: 'class',
+                        name: name,
+                        file: file,
+                        id: `class-${idx}`,
+                        classIdx: idx
+                    });
+                });
+            }
+
+            // Functions
+            if (INDEX_DATA.functions) {
+                INDEX_DATA.functions.forEach((func, idx) => {
+                    const nameIdx = func[0];
+                    const name = INDEX_DATA.names[nameIdx];
+                    const fileIdx = func[2];
+                    const file = INDEX_DATA.files[fileIdx];
+                    
+                    items.push({
+                        type: 'function',
+                        name: name,
+                        file: file,
+                        id: `function-${idx}`,
+                        funcIdx: idx
+                    });
+                });
+            }
+
+            return items;
+        }
+
+        // Filter items
+        function filterItems(items) {
+            return items.filter(item => {
+                // Type filter
+                if (currentFilter !== 'all') {
+                    if (currentFilter === 'files' && item.type !== 'file') return false;
+                    if (currentFilter === 'classes' && item.type !== 'class') return false;
+                    if (currentFilter === 'functions' && item.type !== 'function') return false;
+                }
+
+                // Search filter
+                if (searchQuery) {
+                    const query = searchQuery.toLowerCase();
+                    return item.name.toLowerCase().includes(query) ||
+                           (item.file && item.file.toLowerCase().includes(query));
+                }
+
+                return true;
+            });
+        }
+
+        // Render tree
+        function renderTree() {
+            const tree = document.getElementById('tree');
+            const allItems = buildTreeItems();
+            const filtered = filterItems(allItems);
+
+            if (filtered.length === 0) {
+                tree.innerHTML = '<div style="padding:16px;color:var(--text-secondary);text-align:center">No results</div>';
+                return;
+            }
+
+            tree.innerHTML = filtered.map(item => {
+                const icon = item.type === 'file' ? '📄' : 
+                            item.type === 'class' ? '🏛️' : '🔧';
+                const badge = item.type === 'file' ? 'badge-file' : 
+                             item.type === 'class' ? 'badge-class' : 'badge-function';
+                
+                return `
+                    <div class="tree-item" data-id="${item.id}">
+                        <span class="icon">${icon}</span>
+                        <span class="badge ${badge}">${item.type}</span>
+                        ${item.name}
+                        ${item.file ? `<br><small style="color:var(--text-secondary);margin-left:28px">${item.file}</small>` : ''}
+                    </div>
+                `;
+            }).join('');
+
+            // Attach click handlers
+            tree.querySelectorAll('.tree-item').forEach(el => {
+                el.addEventListener('click', () => {
+                    const itemId = el.getAttribute('data-id');
+                    const item = allItems.find(i => i.id === itemId);
+                    selectItem(item);
+                    
+                    // Update selection
+                    tree.querySelectorAll('.tree-item').forEach(e => e.classList.remove('selected'));
+                    el.classList.add('selected');
+                });
+            });
+        }
+
+        // Select item and show details
+        function selectItem(item) {
+            selectedItem = item;
+            const panel = document.getElementById('detail-panel');
+
+            let html = `<h2>${item.name}</h2>`;
+            html += `<div class="badge ${item.type === 'file' ? 'badge-file' : item.type === 'class' ? 'badge-class' : 'badge-function'}">${item.type}</div>`;
+
+            // Location info
+            html += '<div class="detail-section"><h3>Location</h3>';
+            if (item.file) {
+                html += `<div class="detail-row"><strong>File:</strong> ${item.file}</div>`;
+            }
+
+            // Get location data
+            if (item.type === 'function' && LOCATION_DATA.functions && LOCATION_DATA.functions[item.funcIdx]) {
+                const loc = LOCATION_DATA.functions[item.funcIdx];
+                html += `<div class="detail-row"><strong>Lines:</strong> ${loc[2]} - ${loc[3]}</div>`;
+            } else if (item.type === 'class' && LOCATION_DATA.classes && LOCATION_DATA.classes[item.classIdx]) {
+                const loc = LOCATION_DATA.classes[item.classIdx];
+                html += `<div class="detail-row"><strong>Lines:</strong> ${loc[2]} - ${loc[3]}</div>`;
+            }
+
+            html += '</div>';
+
+            // Type hints
+            if (item.type === 'function' && INDEX_DATA.typehints) {
+                const funcData = INDEX_DATA.functions[item.funcIdx];
+                const locationId = funcData.length > 3 ? funcData[3] : item.funcIdx;
+                const hints = INDEX_DATA.typehints[locationId];
+                
+                if (hints) {
+                    html += '<div class="detail-section"><h3>Type Hints</h3>';
+                    if (hints.params && hints.params.length > 0) {
+                        html += '<div class="detail-row"><strong>Parameters:</strong></div>';
+                        hints.params.forEach(([nameIdx, typeIdx]) => {
+                            html += `<div class="code-block">${INDEX_DATA.names[nameIdx]}: ${INDEX_DATA.names[typeIdx]}</div>`;
+                        });
+                    }
+                    if (hints.return !== undefined) {
+                        html += `<div class="detail-row"><strong>Returns:</strong></div>`;
+                        html += `<div class="code-block">${INDEX_DATA.names[hints.return]}</div>`;
+                    }
+                    html += '</div>';
+                }
+            }
+
+            // Docstrings
+            if (DOCSTRINGS_DATA && item.type === 'function' && DOCSTRINGS_DATA.functions) {
+                const docEntry = DOCSTRINGS_DATA.functions.find(d => d[0] === item.funcIdx);
+                if (docEntry && docEntry[1] && docEntry[1].length > 0) {
+                    html += '<div class="detail-section"><h3>Documentation</h3>';
+                    docEntry[1].forEach(([textIdx]) => {
+                        const docText = DOCSTRINGS_DATA.docstrings_text[textIdx];
+                        html += `<div class="code-block">${escapeHtml(docText)}</div>`;
+                    });
+                    html += '</div>';
+                }
+            }
+
+            // Comments
+            if (COMMENTS_DATA && item.type === 'function' && COMMENTS_DATA.functions) {
+                const commEntry = COMMENTS_DATA.functions.find(c => c[0] === item.funcIdx);
+                if (commEntry && commEntry[1] && commEntry[1].length > 0) {
+                    html += '<div class="detail-section"><h3>Comments</h3>';
+                    commEntry[1].forEach(([textIdx, , line]) => {
+                        const commText = COMMENTS_DATA.comments_text[textIdx];
+                        html += `<div class="detail-row"><strong>Line ${line}:</strong> ${escapeHtml(commText)}</div>`;
+                    });
+                    html += '</div>';
+                }
+            }
+
+            panel.innerHTML = html;
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // Show overview
+        function showOverview() {
+            const panel = document.getElementById('detail-panel');
+            
+            const stats = {
+                files: INDEX_DATA.files ? INDEX_DATA.files.length : 0,
+                classes: INDEX_DATA.classes ? INDEX_DATA.classes.length : 0,
+                functions: INDEX_DATA.functions ? INDEX_DATA.functions.length : 0,
+                modules: INDEX_DATA.modules ? INDEX_DATA.modules.length : 0
+            };
+
+            panel.innerHTML = `
+                <h2>Project Overview</h2>
+                <div class="stats">
+                    <div class="stat-card">
+                        <div class="value">${stats.files}</div>
+                        <div class="label">Files</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="value">${stats.modules}</div>
+                        <div class="label">Modules</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="value">${stats.classes}</div>
+                        <div class="label">Classes</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="value">${stats.functions}</div>
+                        <div class="label">Functions</div>
+                    </div>
+                </div>
+                <div class="detail-section">
+                    <h3>About</h3>
+                    <p>This interactive viewer displays the indexed structure of your Python project.</p>
+                    <p style="margin-top:8px">Use the sidebar to navigate through files, classes, and functions. Click on any item to view its details.</p>
+                </div>
+            `;
+        }
+
+        // Event listeners
+        document.getElementById('theme-toggle').addEventListener('click', toggleTheme);
+
+        document.getElementById('search-input').addEventListener('input', (e) => {
+            searchQuery = e.target.value;
+            renderTree();
+        });
+
+        document.querySelectorAll('.filter-tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                currentFilter = tab.getAttribute('data-filter');
+                renderTree();
+            });
+        });
+
+        // Initialize
+        initTheme();
+        document.getElementById('project-name').textContent = INDEX_DATA.meta ? INDEX_DATA.meta.project : 'Project';
+        showOverview();
+        renderTree();
+    </script>
+</body>
+</html>
