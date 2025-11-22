@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 """
-File utilities for PY-Indexer v3.0.
+File utilities for PY-Indexer v3.0 - UPDATED with file size protection.
 
 Provides file operations with:
 - Multiple encoding fallback (UTF-8, CP1251, Latin-1)
+- File size validation (protection from huge files)
 - Directory creation with validation
 - File hash calculation
 - File modification time retrieval
@@ -22,17 +23,23 @@ from utils.utils_logger import get_logger
 
 logger = get_logger(__name__)
 
+# Default max file size (1 MB) - can be overridden from config
+DEFAULT_MAX_FILE_SIZE = 1048576  # 1 MB in bytes
 
-def read_python_file(file_path: str | Path) -> str:
+
+def read_python_file(file_path: str | Path, max_size: int = DEFAULT_MAX_FILE_SIZE) -> str:
     """
-    Read Python file with encoding fallback.
+    Read Python file with encoding fallback and size protection.
     
     Tries encodings in order: UTF-8 -> CP1251 -> Latin-1
+    Protects against reading extremely large files.
     
     Parameters
     ----------
     file_path : str | Path
         Path to Python file
+    max_size : int, optional
+        Maximum file size in bytes (default: 1 MB)
         
     Returns
     -------
@@ -44,13 +51,17 @@ def read_python_file(file_path: str | Path) -> str:
     FileNotFoundError
         If file doesn't exist
     ValueError
-        If file cannot be decoded with any supported encoding
+        If file cannot be decoded with any supported encoding OR file too large
         
     Examples
     --------
     >>> content = read_python_file("module.py")
     >>> print(len(content))
     1234
+    
+    >>> content = read_python_file("module.py", max_size=5242880)  # 5 MB
+    >>> print(len(content))
+    2048000
     """
     path = Path(file_path)
     
@@ -61,6 +72,20 @@ def read_python_file(file_path: str | Path) -> str:
     if not path.is_file():
         logger.error(f"Not a file: {path}")
         raise ValueError(f"Not a file: {path}")
+    
+    # Check file size BEFORE reading
+    file_size = path.stat().st_size
+    if file_size > max_size:
+        logger.error(
+            f"File too large: {path} ({file_size} bytes > {max_size} bytes limit). "
+            f"Skipping to prevent memory issues."
+        )
+        raise ValueError(
+            f"File too large: {path} ({file_size} bytes > {max_size} bytes limit). "
+            f"Increase max_file_size in pyproject.toml if needed."
+        )
+    
+    logger.debug(f"File size OK: {path} ({file_size} bytes)")
     
     encodings = ['utf-8', 'cp1251', 'latin-1']
     
