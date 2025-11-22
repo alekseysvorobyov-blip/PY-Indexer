@@ -25,6 +25,11 @@ logger = get_logger(__name__)
 
 
 @dataclass
+class CommentInfo:
+    """Comment information."""
+    text: str
+    line: int
+@dataclass
 class ParameterInfo:
     """Function/method parameter information."""
     name: str
@@ -43,6 +48,7 @@ class FunctionInfo:
     parameters: list[ParameterInfo] = field(default_factory=list)
     return_type: Optional[str] = None
     is_async: bool = False
+    comments: list[CommentInfo] = field(default_factory=list)
 
 
 @dataclass
@@ -55,6 +61,7 @@ class ClassInfo:
     docstring: Optional[str] = None
     decorators: list[str] = field(default_factory=list)
     methods: list[FunctionInfo] = field(default_factory=list)
+    comments: list[CommentInfo] = field(default_factory=list)
     attributes: list[str] = field(default_factory=list)
 
 
@@ -67,11 +74,6 @@ class ImportInfo:
     is_from: bool = False
 
 
-@dataclass
-class CommentInfo:
-    """Comment information."""
-    text: str
-    line: int
 
 
 @dataclass
@@ -97,6 +99,7 @@ class ASTParser:
     def __init__(self):
         """Initialize parser."""
         self.logger = get_logger(__name__)
+        self.all_comments: list[CommentInfo] = []
     
     def parse_file(self, file_path: Path | str) -> Optional[ParsedFile]:
         """
@@ -144,6 +147,7 @@ class ASTParser:
             )
             
             # Extract comments
+            self.all_comments = self._extract_comments(source)
             parsed.comments = self._extract_comments(source)
             
             # Extract imports
@@ -238,6 +242,13 @@ class ASTParser:
             line_start = node.lineno
             line_end = node.end_lineno if hasattr(node, 'end_lineno') else line_start
             
+
+            # Extract comments within class range
+            class_comments = [
+                c for c in self.all_comments
+                if line_start <= c.line <= line_end
+            ]
+
             return ClassInfo(
                 name=node.name,
                 line_start=line_start,
@@ -245,7 +256,8 @@ class ASTParser:
                 bases=bases,
                 docstring=docstring,
                 decorators=decorators,
-                methods=methods
+                methods=methods,
+                comments=class_comments
             )
         
         except Exception as e:
@@ -292,6 +304,13 @@ class ASTParser:
             # Check if async
             is_async = isinstance(node, ast.AsyncFunctionDef)
             
+
+            # Extract comments within function range
+            func_comments = [
+                c for c in self.all_comments
+                if line_start <= c.line <= line_end
+            ]
+
             return FunctionInfo(
                 name=node.name,
                 line_start=line_start,
@@ -300,7 +319,8 @@ class ASTParser:
                 decorators=decorators,
                 parameters=parameters,
                 return_type=return_type,
-                is_async=is_async
+                is_async=is_async,
+                comments=func_comments
             )
         
         except Exception as e:
