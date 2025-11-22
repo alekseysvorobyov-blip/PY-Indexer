@@ -340,6 +340,12 @@ class PyIndexer:
         tech_docstrings = self.docstrings_builder.build()
         tech_comments = self.comments_builder.build()
 
+        # Store data for HTML viewer
+        self.index_data = tech_index
+        self.location_data = tech_location
+        self.docstrings_data = tech_docstrings
+        self.comments_data = tech_comments
+
         # Define files and data
         files = [
             ("tech-index.json", tech_index),
