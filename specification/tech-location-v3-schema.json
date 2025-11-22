@@ -1,0 +1,371 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "TECH-LOCATION-v3.0",
+  "description": "Развернутая схема для физического расположения объектов Python проекта с расширениями для проверки правил кода",
+  "type": "object",
+  "required": ["meta", "paths"],
+  "properties": {
+    "meta": {
+      "type": "object",
+      "required": ["version"],
+      "properties": {
+        "version": {
+          "type": "string",
+          "pattern": "^3\\.0"
+        },
+        "generated": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "project": {
+          "type": "string"
+        }
+      }
+    },
+    "paths": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Array of file paths (relative)"
+    },
+    "modifieds": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Array of last modification dates (ISO-8601)"
+    },
+    "hashes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Array of SHA256 file hashes"
+    },
+    "files": {
+      "type": "array",
+      "items": {
+        "type": "array"
+      },
+      "description": "File data arrays: [path_idx, line_count, size_bytes, modified_idx, hash_idx]"
+    },
+    "modules": {
+      "type": "array",
+      "items": {
+        "type": "array"
+      },
+      "description": "Module coordinates: [module_id, location_id, file_id, line_start, line_end, docstring?]"
+    },
+    "classes": {
+      "type": "array",
+      "items": {
+        "type": "array"
+      },
+      "description": "Class coordinates"
+    },
+    "functions": {
+      "type": "array",
+      "items": {
+        "type": "array"
+      },
+      "description": "Function coordinates"
+    },
+    "imports": {
+      "type": "array",
+      "items": {
+        "type": "array"
+      },
+      "description": "Import coordinates"
+    },
+    "comments": {
+      "type": "array",
+      "items": {
+        "type": "array"
+      },
+      "description": "Important comments"
+    },
+    "decorators": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Array of decorator strings (for indexing)"
+    },
+    "commenttexts": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Array of comment texts (for indexing)"
+    },
+    "typehints": {
+      "type": "array",
+      "items": {
+        "type": "array",
+        "minItems": 3,
+        "maxItems": 3,
+        "items": [
+          {
+            "type": "string",
+            "description": "func_name"
+          },
+          {
+            "type": "array",
+            "description": "params [name, type, name, type, ...]"
+          },
+          {
+            "type": "string",
+            "description": "return_type"
+          }
+        ]
+      },
+      "description": "Type hints развернутые: [func_name, [param1, type1, ...], return_type]"
+    },
+    "mutabledefaults": {
+      "type": "array",
+      "items": {
+        "type": "array",
+        "minItems": 6,
+        "maxItems": 6,
+        "items": [
+          {
+            "type": "string",
+            "description": "func_name"
+          },
+          {
+            "type": "string",
+            "description": "file_path"
+          },
+          {
+            "type": "integer",
+            "minimum": 1,
+            "description": "line"
+          },
+          {
+            "type": "string",
+            "description": "param_name"
+          },
+          {
+            "type": "string",
+            "description": "default_value"
+          },
+          {
+            "type": "string",
+            "description": "issue_type (list/dict/set)"
+          }
+        ]
+      },
+      "description": "Mutable defaults: [func_name, file_path, line, param_name, default_value, issue_type]"
+    },
+    "sqlqueries": {
+      "type": "array",
+      "items": {
+        "type": "array",
+        "minItems": 5,
+        "maxItems": 5,
+        "items": [
+          {
+            "type": "string",
+            "description": "file_path"
+          },
+          {
+            "type": "integer",
+            "minimum": 1,
+            "description": "line"
+          },
+          {
+            "type": "string",
+            "description": "query_type (SELECT/INSERT/UPDATE/DELETE)"
+          },
+          {
+            "type": "boolean",
+            "description": "is_safe"
+          },
+          {
+            "type": "string",
+            "description": "query_text"
+          }
+        ]
+      },
+      "description": "SQL queries: [file_path, line, query_type, is_safe, query_text]"
+    },
+    "hardcodedsecrets": {
+      "type": "array",
+      "items": {
+        "type": "array",
+        "minItems": 4,
+        "maxItems": 4,
+        "items": [
+          {
+            "type": "string",
+            "description": "file_path"
+          },
+          {
+            "type": "integer",
+            "minimum": 1,
+            "description": "line"
+          },
+          {
+            "type": "string",
+            "description": "pattern_type (API_KEY/PASSWORD/SECRET/TOKEN/PRIVATE_KEY)"
+          },
+          {
+            "type": "string",
+            "description": "full_line"
+          }
+        ]
+      },
+      "description": "Hardcoded secrets: [file_path, line, pattern_type, full_line]"
+    },
+    "loggingissues": {
+      "type": "array",
+      "items": {
+        "type": "array",
+        "minItems": 5,
+        "maxItems": 5,
+        "items": [
+          {
+            "type": "string",
+            "description": "func_name"
+          },
+          {
+            "type": "string",
+            "description": "file_path"
+          },
+          {
+            "type": "integer",
+            "minimum": 1,
+            "description": "line"
+          },
+          {
+            "type": "boolean",
+            "description": "has_logging"
+          },
+          {
+            "type": "string",
+            "description": "issue_description"
+          }
+        ]
+      },
+      "description": "Logging issues: [func_name, file_path, line, has_logging, issue_description]"
+    },
+    "globalvars": {
+      "type": "array",
+      "items": {
+        "type": "array",
+        "minItems": 5,
+        "maxItems": 5,
+        "items": [
+          {
+            "type": "string",
+            "description": "var_name"
+          },
+          {
+            "type": "string",
+            "description": "file_path"
+          },
+          {
+            "type": "integer",
+            "minimum": 1,
+            "description": "line"
+          },
+          {
+            "type": "boolean",
+            "description": "is_constant"
+          },
+          {
+            "type": "string",
+            "description": "note"
+          }
+        ]
+      },
+      "description": "Global variables: [var_name, file_path, line, is_constant, note]"
+    },
+    "classdependencies": {
+      "type": "array",
+      "items": {
+        "type": "array",
+        "minItems": 4,
+        "maxItems": 4,
+        "items": [
+          {
+            "type": "string",
+            "description": "class_name"
+          },
+          {
+            "type": "string",
+            "description": "file_path"
+          },
+          {
+            "type": "array",
+            "description": "init_params [[name, type], ...]"
+          },
+          {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "internal_creations [class_names]"
+          }
+        ]
+      },
+      "description": "Class dependencies: [class_name, file_path, init_params, internal_creations]"
+    },
+    "docstringformats": {
+      "type": "array",
+      "items": {
+        "type": "array",
+        "minItems": 3,
+        "maxItems": 3,
+        "items": [
+          {
+            "type": "string",
+            "description": "func_name"
+          },
+          {
+            "type": "string",
+            "description": "file_path"
+          },
+          {
+            "type": "string",
+            "enum": ["NumPy", "Google", "Sphinx", "Unknown", "None"],
+            "description": "format"
+          }
+        ]
+      },
+      "description": "Docstring formats: [func_name, file_path, format]"
+    },
+    "testcoverage": {
+      "type": "array",
+      "items": {
+        "type": "array",
+        "minItems": 4,
+        "maxItems": 4,
+        "items": [
+          {
+            "type": "string",
+            "description": "func_name"
+          },
+          {
+            "type": "string",
+            "description": "file_path"
+          },
+          {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "test_functions [names]"
+          },
+          {
+            "type": "integer",
+            "minimum": 0,
+            "description": "test_count"
+          }
+        ]
+      },
+      "description": "Test coverage: [func_name, file_path, test_functions, test_count]"
+    }
+  }
+}

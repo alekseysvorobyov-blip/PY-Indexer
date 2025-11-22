@@ -1,0 +1,368 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "TECH-LOCATION Schema v2.0",
+  "description": "Compact schema for physical location index of Python project objects",
+  "type": "object",
+  "required": [
+    "meta",
+    "paths",
+    "modifieds",
+    "hashes",
+    "files",
+    "modules",
+    "classes",
+    "functions",
+    "imports",
+    "comments"
+  ],
+  "properties": {
+    "meta": {
+      "type": "object",
+      "required": [
+        "version",
+        "schemaversion",
+        "indexeddate",
+        "techindexhash",
+        "projectroot",
+        "techindexpath"
+      ],
+      "properties": {
+        "version": {
+          "type": "string",
+          "pattern": "^2\\.0$",
+          "description": "TECH-LOCATION format version"
+        },
+        "schemaversion": {
+          "type": "string",
+          "pattern": "^2\\.0$",
+          "description": "JSON schema version"
+        },
+        "indexeddate": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Index creation date and time"
+        },
+        "techindexhash": {
+          "type": "string",
+          "description": "SHA256 hash of TECH-INDEX for synchronization check"
+        },
+        "projectroot": {
+          "type": "string",
+          "description": "Absolute path to project root"
+        },
+        "techindexpath": {
+          "type": "string",
+          "description": "Path to TECH-INDEX file used"
+        },
+        "totalobjects": {
+          "type": "object",
+          "properties": {
+            "modules": {
+              "type": "integer"
+            },
+            "classes": {
+              "type": "integer"
+            },
+            "functions": {
+              "type": "integer"
+            },
+            "imports": {
+              "type": "integer"
+            },
+            "comments": {
+              "type": "integer"
+            }
+          }
+        }
+      }
+    },
+    "paths": {
+      "type": "array",
+      "description": "Array of file paths (relative)",
+      "items": {
+        "type": "string"
+      }
+    },
+    "modifieds": {
+      "type": "array",
+      "description": "Array of last modification dates (ISO-8601)",
+      "items": {
+        "type": "string"
+      }
+    },
+    "hashes": {
+      "type": "array",
+      "description": "Array of SHA256 file hashes",
+      "items": {
+        "type": "string"
+      }
+    },
+    "files": {
+      "type": "array",
+      "description": "File data arrays: [path_idx, line_count, size_bytes, modified_idx, hash_idx]",
+      "items": {
+        "type": "array",
+        "minItems": 5,
+        "maxItems": 5,
+        "items": [
+          {
+            "type": "integer",
+            "description": "Index in paths[]"
+          },
+          {
+            "type": "integer",
+            "description": "Line count"
+          },
+          {
+            "type": "integer",
+            "description": "Size in bytes"
+          },
+          {
+            "type": "integer",
+            "description": "Index in modifieds[]"
+          },
+          {
+            "type": "integer",
+            "description": "Index in hashes[]"
+          }
+        ]
+      }
+    },
+    "modules": {
+      "type": "array",
+      "description": "Module coordinates: [module_id, location_id, file_id, line_start, line_end, docstring?]",
+      "items": {
+        "type": "array",
+        "minItems": 5,
+        "maxItems": 6,
+        "items": [
+          {
+            "type": "integer",
+            "description": "Module ID"
+          },
+          {
+            "type": "integer",
+            "description": "Location ID"
+          },
+          {
+            "type": "integer",
+            "description": "File ID"
+          },
+          {
+            "type": "integer",
+            "description": "First line"
+          },
+          {
+            "type": "integer",
+            "description": "Last line"
+          },
+          {
+            "type": "array",
+            "description": "Docstring [line_start, line_end]",
+            "minItems": 2,
+            "maxItems": 2,
+            "items": {
+              "type": "integer"
+            }
+          }
+        ]
+      }
+    },
+    "classes": {
+      "type": "array",
+      "description": "Class coordinates: [class_id, location_id, file_id, line_start, line_end, definition_line, body_start, indentation, decorators?, docstring?]",
+      "items": {
+        "type": "array",
+        "minItems": 8,
+        "maxItems": 10,
+        "items": [
+          {
+            "type": "integer",
+            "description": "Class ID"
+          },
+          {
+            "type": "integer",
+            "description": "Location ID"
+          },
+          {
+            "type": "integer",
+            "description": "File ID"
+          },
+          {
+            "type": "integer",
+            "description": "First line"
+          },
+          {
+            "type": "integer",
+            "description": "Last line"
+          },
+          {
+            "type": "integer",
+            "description": "Definition line (class keyword)"
+          },
+          {
+            "type": "integer",
+            "description": "Body start line"
+          },
+          {
+            "type": "integer",
+            "description": "Indentation in spaces"
+          },
+          {
+            "type": "array",
+            "description": "Decorators [[line, decorator_idx], ...]",
+            "items": {
+              "type": "array",
+              "minItems": 2,
+              "maxItems": 2,
+              "items": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "type": "array",
+            "description": "Docstring [line_start, line_end]",
+            "minItems": 2,
+            "maxItems": 2,
+            "items": {
+              "type": "integer"
+            }
+          }
+        ]
+      }
+    },
+    "functions": {
+      "type": "array",
+      "description": "Function coordinates: [function_id, location_id, file_id, line_start, line_end, signature_line, body_start, indentation, decorators?, docstring?]",
+      "items": {
+        "type": "array",
+        "minItems": 8,
+        "maxItems": 10,
+        "items": [
+          {
+            "type": "integer",
+            "description": "Function ID"
+          },
+          {
+            "type": "integer",
+            "description": "Location ID"
+          },
+          {
+            "type": "integer",
+            "description": "File ID"
+          },
+          {
+            "type": "integer",
+            "description": "First line"
+          },
+          {
+            "type": "integer",
+            "description": "Last line"
+          },
+          {
+            "type": "integer",
+            "description": "Signature line (def keyword)"
+          },
+          {
+            "type": "integer",
+            "description": "Body start line"
+          },
+          {
+            "type": "integer",
+            "description": "Indentation in spaces"
+          },
+          {
+            "type": "array",
+            "description": "Decorators [[line, decorator_idx], ...]",
+            "items": {
+              "type": "array",
+              "minItems": 2,
+              "maxItems": 2,
+              "items": {
+                "type": "integer"
+              }
+            }
+          },
+          {
+            "type": "array",
+            "description": "Docstring [line_start, line_end]",
+            "minItems": 2,
+            "maxItems": 2,
+            "items": {
+              "type": "integer"
+            }
+          }
+        ]
+      }
+    },
+    "imports": {
+      "type": "array",
+      "description": "Import coordinates: [import_id, file_id, line, type_idx]",
+      "items": {
+        "type": "array",
+        "minItems": 4,
+        "maxItems": 4,
+        "items": [
+          {
+            "type": "integer",
+            "description": "Import ID"
+          },
+          {
+            "type": "integer",
+            "description": "File ID"
+          },
+          {
+            "type": "integer",
+            "description": "Line number"
+          },
+          {
+            "type": "integer",
+            "description": "Type: 0=import, 1=from_import"
+          }
+        ]
+      }
+    },
+    "comments": {
+      "type": "array",
+      "description": "Important comments: [file_id, line, type_idx, content_idx]",
+      "items": {
+        "type": "array",
+        "minItems": 4,
+        "maxItems": 4,
+        "items": [
+          {
+            "type": "integer",
+            "description": "File ID"
+          },
+          {
+            "type": "integer",
+            "description": "Line number"
+          },
+          {
+            "type": "integer",
+            "description": "Type: 0=TODO, 1=FIXME, 2=NOTE, 3=WARNING, 4=HACK, 5=XXX, 6=OPTIMIZE"
+          },
+          {
+            "type": "integer",
+            "description": "Index in commenttexts[]"
+          }
+        ]
+      }
+    },
+    "decorators": {
+      "type": "array",
+      "description": "Array of decorator strings (for indexing)",
+      "items": {
+        "type": "string"
+      }
+    },
+    "commenttexts": {
+      "type": "array",
+      "description": "Array of comment texts (for indexing)",
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}

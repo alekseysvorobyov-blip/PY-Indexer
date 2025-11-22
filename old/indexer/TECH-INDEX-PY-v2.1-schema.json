@@ -1,0 +1,444 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "TECH-INDEX-PY Schema v2.1",
+  "description": "Максимально компактная схема индексации Python проектов для AI-анализа",
+  "type": "object",
+  "required": [
+    "meta",
+    "names",
+    "files",
+    "modules"
+  ],
+  "properties": {
+    "meta": {
+      "type": "object",
+      "required": [
+        "version",
+        "schemaversion",
+        "indexeddate",
+        "sourcehash",
+        "projectroot",
+        "pythonversion",
+        "indexerversion",
+        "totalobjects",
+        "pythonrules",
+        "indexingoptions",
+        "compression"
+      ],
+      "properties": {
+        "version": {
+          "type": "string",
+          "pattern": "^2\\.1$",
+          "description": "Версия формата индекса"
+        },
+        "schemaversion": {
+          "type": "string",
+          "pattern": "^2\\.1$",
+          "description": "Версия JSON схемы"
+        },
+        "indexeddate": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Дата и время индексации в ISO-8601"
+        },
+        "sourcehash": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{8,64}$",
+          "description": "SHA256 хеш исходного кода (8-64 символа)"
+        },
+        "projectroot": {
+          "type": "string",
+          "description": "Корневая директория проекта"
+        },
+        "pythonversion": {
+          "type": "string",
+          "description": "Версия Python (например, 3.11.5)"
+        },
+        "indexerversion": {
+          "type": "string",
+          "description": "Версия индексатора"
+        },
+        "totalobjects": {
+          "type": "object",
+          "required": [
+            "modules",
+            "classes",
+            "functions",
+            "attributes",
+            "imports"
+          ],
+          "properties": {
+            "modules": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "classes": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "functions": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "attributes": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "imports": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          "additionalProperties": false
+        },
+        "pythonrules": {
+          "type": "object",
+          "required": [
+            "enforcedpatterns",
+            "restrictedpatterns"
+          ],
+          "properties": {
+            "enforcedpatterns": {
+              "type": "array",
+              "items": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "description": "Индексы из names для enforced паттернов"
+            },
+            "restrictedpatterns": {
+              "type": "array",
+              "items": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "description": "Индексы из names для restricted паттернов"
+            },
+            "customrules": {
+              "type": "array",
+              "items": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "description": "Индексы из names для кастомных правил"
+            }
+          }
+        },
+        "indexingoptions": {
+          "type": "object",
+          "required": [
+            "includedocstrings",
+            "includecomments",
+            "includetypehints",
+            "parsedecorators",
+            "parselinenumbers"
+          ],
+          "properties": {
+            "includedocstrings": {
+              "type": "integer",
+              "enum": [
+                0,
+                1
+              ]
+            },
+            "includecomments": {
+              "type": "integer",
+              "enum": [
+                0,
+                1
+              ]
+            },
+            "includetypehints": {
+              "type": "integer",
+              "enum": [
+                0,
+                1
+              ]
+            },
+            "parsedecorators": {
+              "type": "integer",
+              "enum": [
+                0,
+                1
+              ]
+            },
+            "parselinenumbers": {
+              "type": "integer",
+              "enum": [
+                0,
+                1
+              ]
+            }
+          },
+          "additionalProperties": false
+        },
+        "compression": {
+          "type": "object",
+          "required": [
+            "namesencoding",
+            "hashlen"
+          ],
+          "properties": {
+            "namesencoding": {
+              "type": "string",
+              "enum": [
+                "raw",
+                "gzip+base64"
+              ],
+              "description": "Кодировка массива names: raw (не сжат) или gzip+base64 (сжат)"
+            },
+            "hashlen": {
+              "type": "integer",
+              "enum": [
+                8,
+                16,
+                32,
+                64
+              ],
+              "description": "Длина хешей в символах"
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "names": {
+      "oneOf": [
+        {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "description": "Справочный массив уникальных строк (raw)"
+        },
+        {
+          "type": "string",
+          "description": "Base64-закодированный GZIP массив names (если compression.namesencoding = gzip+base64)"
+        }
+      ]
+    },
+    "files": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1,
+      "description": "Массив путей к файлам проекта"
+    },
+    "modules": {
+      "type": "array",
+      "items": {
+        "type": "array",
+        "minItems": 3,
+        "maxItems": 3,
+        "items": [
+          {
+            "type": "integer",
+            "minimum": 0,
+            "description": "nameidx"
+          },
+          {
+            "type": "integer",
+            "minimum": 0,
+            "description": "fileidx"
+          },
+          {
+            "type": "integer",
+            "minimum": -1,
+            "description": "locationid"
+          }
+        ]
+      }
+    },
+    "classes": {
+      "type": "array",
+      "items": {
+        "type": "array",
+        "minItems": 6,
+        "maxItems": 6,
+        "items": [
+          {
+            "type": "integer",
+            "minimum": 0
+          },
+          {
+            "type": "integer",
+            "minimum": 0
+          },
+          {
+            "type": "integer",
+            "minimum": 0
+          },
+          {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            }
+          },
+          {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            }
+          },
+          {
+            "type": "integer",
+            "minimum": -1
+          }
+        ]
+      }
+    },
+    "functions": {
+      "type": "array",
+      "items": {
+        "type": "array",
+        "minItems": 8,
+        "maxItems": 8
+      }
+    },
+    "parameters": {
+      "type": "object",
+      "patternProperties": {
+        "^[0-9]+$": {
+          "type": "array",
+          "items": {
+            "type": "array",
+            "minItems": 6,
+            "maxItems": 6,
+            "items": [
+              {
+                "type": "integer",
+                "minimum": 0
+              },
+              {
+                "type": "integer",
+                "minimum": 0
+              },
+              {
+                "type": "integer",
+                "minimum": -1
+              },
+              {
+                "type": "integer",
+                "minimum": -1
+              },
+              {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 3
+              },
+              {
+                "type": "integer",
+                "enum": [
+                  0,
+                  1
+                ],
+                "description": "isrequired: 1=true, 0=false"
+              }
+            ]
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "docstrings": {
+      "type": "array",
+      "items": {
+        "type": "array",
+        "minItems": 4,
+        "maxItems": 4
+      }
+    },
+    "validation": {
+      "type": "object",
+      "properties": {
+        "filehashes": {
+          "type": "object",
+          "patternProperties": {
+            "^[0-9]+$": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{8,64}$",
+              "description": "Укороченный хеш (8-64 символа)"
+            }
+          }
+        },
+        "objecthashes": {
+          "type": "object",
+          "patternProperties": {
+            "^[0-9]+$": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{8,64}$"
+            }
+          }
+        },
+        "integritycheck": {
+          "type": "object",
+          "required": [
+            "algorithmidx",
+            "datahash"
+          ],
+          "properties": {
+            "algorithmidx": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "datahash": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{8,64}$"
+            }
+          }
+        }
+      }
+    },
+    "imports": {
+      "type": "array",
+      "items": {
+        "type": "array",
+        "minItems": 3,
+        "maxItems": 3
+      }
+    },
+    "graph": {
+      "type": "object",
+      "properties": {
+        "callgraph": {
+          "type": "object",
+          "patternProperties": {
+            "^[0-9]+$": {
+              "type": "array",
+              "items": {
+                "type": "integer",
+                "minimum": 0
+              }
+            }
+          }
+        },
+        "inheritancetree": {
+          "type": "object",
+          "patternProperties": {
+            "^[0-9]+$": {
+              "type": "object",
+              "properties": {
+                "parents": {
+                  "type": "array",
+                  "items": {
+                    "type": "integer"
+                  }
+                },
+                "children": {
+                  "type": "array",
+                  "items": {
+                    "type": "integer"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "additionalProperties": false
+}
