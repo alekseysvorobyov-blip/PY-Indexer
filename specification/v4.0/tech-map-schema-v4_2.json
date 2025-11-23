@@ -1,0 +1,63 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "TECH-MAP v1.2",
+  "description": "Ultra-compact project navigation index",
+  "type": "object",
+  "required": ["meta", "refs", "indexes"],
+  "properties": {
+    "meta": {
+      "type": "object",
+      "required": ["version", "project", "generated"],
+      "properties": {
+        "version": {"type": "string", "pattern": "^1\\.2$"},
+        "project": {"type": "string"},
+        "generated": {"type": "string", "format": "date-time"}
+      }
+    },
+    "refs": {
+      "type": "object",
+      "properties": {
+        "index": {"type": "string"},
+        "location": {"type": "string"},
+        "docstrings": {"type": "string"},
+        "comments": {"type": "string"}
+      }
+    },
+    "indexes": {
+      "type": "object",
+      "properties": {
+        "file_entities": {
+          "type": "array",
+          "items": {
+            "type": "array",
+            "minItems": 2,
+            "items": [
+              {"type": "integer", "description": "file_location_id"},
+              {"type": "array", "items": {"type": "integer"}, "description": "entity_location_ids"}
+            ]
+          }
+        },
+        "name_entities": {
+          "type": "array", 
+          "items": {
+            "type": "array",
+            "minItems": 2,
+            "items": [
+              {"type": "integer", "description": "name_idx"},
+              {"type": "array", "items": {"type": "integer"}, "description": "entity_location_ids"}
+            ]
+          }
+        },
+        "type_entities": {
+          "type": "object",
+          "properties": {
+            "0": {"type": "array", "items": {"type": "integer"}},
+            "1": {"type": "array", "items": {"type": "integer"}},
+            "2": {"type": "array", "items": {"type": "integer"}},
+            "3": {"type": "array", "items": {"type": "integer"}}
+          }
+        }
+      }
+    }
+  }
+}

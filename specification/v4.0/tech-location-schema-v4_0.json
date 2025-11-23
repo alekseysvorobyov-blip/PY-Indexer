@@ -1,0 +1,102 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "TECH-LOCATION v3.2",
+  "description": "Hierarchical code coordinates mapping with parent-child relationships",
+  "type": "object",
+  "required": ["meta", "files", "locations"],
+  "properties": {
+    "meta": {
+      "type": "object",
+      "required": ["version"],
+      "properties": {
+        "version": {
+          "type": "string",
+          "pattern": "^3\\.2$"
+        },
+        "generated": {
+          "type": "string", 
+          "format": "date-time"
+        },
+        "project": {
+          "type": "string"
+        }
+      }
+    },
+    "files": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "File paths (same as INDEX)"
+    },
+    "locations": {
+      "type": "array",
+      "items": {
+        "type": "array",
+        "minItems": 6,
+        "maxItems": 6,
+        "items": [
+          {
+            "type": "integer",
+            "minimum": 0,
+            "description": "location_id (unique across all types)"
+          },
+          {
+            "type": "integer", 
+            "minimum": -1,
+            "description": "parent_location_id (-1 = root level)"
+          },
+          {
+            "type": "integer",
+            "minimum": 0,
+            "description": "file_idx"
+          },
+          {
+            "type": "integer",
+            "minimum": 1, 
+            "description": "line_start"
+          },
+          {
+            "type": "integer",
+            "minimum": 1,
+            "description": "line_end"
+          },
+          {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 7,
+            "description": "entity_type: 0=file, 1=module, 2=class, 3=function, 4=import, 5=docstring, 6=comment, 7=attribute"
+          }
+        ]
+      }
+    },
+    "hierarchy": {
+      "type": "object",
+      "description": "Quick parent-child lookup indexes",
+      "properties": {
+        "children_by_parent": {
+          "type": "object",
+          "patternProperties": {
+            "^(-1|[0-9]+)$": {
+              "type": "array",
+              "items": {
+                "type": "integer",
+                "description": "child_location_id"
+              }
+            }
+          }
+        },
+        "depth_by_location": {
+          "type": "object", 
+          "patternProperties": {
+            "^[0-9]+$": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "nesting depth"
+            }
+          }
+        }
+      }
+    }
+  }
+}

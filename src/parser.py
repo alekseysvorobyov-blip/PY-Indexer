@@ -174,6 +174,9 @@ class ASTParser:
                 f"{len(parsed.functions)} functions"
             )
             
+
+            # Clear comments for next file
+            self.all_comments = []
             return parsed
         
         except SyntaxError as e:

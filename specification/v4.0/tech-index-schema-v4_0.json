@@ -1,0 +1,114 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "TECH-INDEX v4.1",
+  "description": "Compact hierarchical Python code index",
+  "type": "object",
+  "required": ["meta", "names"],
+  "properties": {
+    "meta": {
+      "type": "object",
+      "required": ["version"],
+      "properties": {
+        "version": {"type": "string", "pattern": "^4\\.1$"},
+        "generated": {"type": "string", "format": "date-time"},
+        "project": {"type": "string"}
+      }
+    },
+    "names": {
+      "type": "array",
+      "items": {"type": "string"}
+    },
+    "modules": {
+      "type": "array",
+      "items": {
+        "type": "array",
+        "minItems": 3,
+        "items": [
+          {"type": "integer", "description": "name_idx"},
+          {"type": "integer", "description": "parent_location_id"},
+          {"type": "integer", "description": "location_id"}
+        ]
+      }
+    },
+    "classes": {
+      "type": "array", 
+      "items": {
+        "type": "array",
+        "minItems": 3,
+        "items": [
+          {"type": "integer", "description": "name_idx"},
+          {"type": "integer", "description": "parent_location_id"},
+          {"type": "integer", "description": "location_id"}
+        ]
+      }
+    },
+    "functions": {
+      "type": "array",
+      "items": {
+        "type": "array", 
+        "minItems": 3,
+        "items": [
+          {"type": "integer", "description": "name_idx"},
+          {"type": "integer", "description": "parent_location_id"},
+          {"type": "integer", "description": "location_id"}
+        ]
+      }
+    },
+    "imports": {
+      "type": "object",
+      "patternProperties": {
+        "^[0-9]+$": {
+          "type": "array",
+          "items": {"type": "integer", "description": "file_location_id"}
+        }
+      }
+    },
+    "signatures": {
+      "type": "object",
+      "patternProperties": {
+        "^[0-9]+$": {
+          "type": "object",
+          "properties": {
+            "params": {
+              "type": "array",
+              "items": {
+                "type": "array",
+                "minItems": 2,
+                "items": [
+                  {"type": "integer", "description": "param_name_idx"},
+                  {"type": "integer", "description": "type_idx"}
+                ]
+              }
+            },
+            "return": {"type": "integer"}
+          }
+        }
+      }
+    },
+    "class_info": {
+      "type": "object", 
+      "patternProperties": {
+        "^[0-9]+$": {
+          "type": "object",
+          "properties": {
+            "bases": {"type": "array", "items": {"type": "integer"}},
+            "mro": {"type": "array", "items": {"type": "integer"}}
+          }
+        }
+      }
+    },
+    "external_dependencies": {
+      "type": "array", 
+      "items": {"type": "integer", "description": "name_idx внешних модулей"}
+    },
+    "call_graph": {
+      "type": "object",
+      "patternProperties": {
+        "^[0-9]+$": {
+          "type": "array", 
+          "items": {"type": "integer", "description": "callee_location_id"}
+        }
+      }
+    }
+  }
+}

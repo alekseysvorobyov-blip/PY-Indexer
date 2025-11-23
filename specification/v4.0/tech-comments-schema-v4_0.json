@@ -1,0 +1,87 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "TECH-COMMENTS v4.0", 
+  "description": "Code comments with hierarchical location references",
+  "type": "object",
+  "required": ["meta", "comments_text", "comments"],
+  "properties": {
+    "meta": {
+      "type": "object",
+      "required": ["version"],
+      "properties": {
+        "version": {
+          "type": "string",
+          "pattern": "^4\\.0$"
+        },
+        "generated": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "project": {
+          "type": "string"
+        }
+      }
+    },
+    "comments_text": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Comment text dictionary"
+    },
+    "comments": {
+      "type": "array",
+      "items": {
+        "type": "array",
+        "minItems": 2,
+        "maxItems": 2,
+        "items": [
+          {
+            "type": "integer",
+            "minimum": 0,
+            "description": "location_id (references location in TECH-LOCATION)"
+          },
+          {
+            "type": "integer", 
+            "minimum": 0,
+            "description": "comments_text_idx"
+          }
+        ]
+      }
+    },
+    "comment_types": {
+      "type": "object",
+      "description": "Quick lookup for comments by type",
+      "properties": {
+        "inline": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "description": "location_id of inline comments"
+          }
+        },
+        "block": {
+          "type": "array", 
+          "items": {
+            "type": "integer",
+            "description": "location_id of block comments"
+          }
+        },
+        "todo": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "description": "location_id of TODO comments"
+          }
+        },
+        "fixme": {
+          "type": "array",
+          "items": {
+            "type": "integer", 
+            "description": "location_id of FIXME comments"
+          }
+        }
+      }
+    }
+  }
+}

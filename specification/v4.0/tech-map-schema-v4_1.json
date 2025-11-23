@@ -1,0 +1,109 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "TECH-MAP v1.0",
+  "description": "Unified Project Map for AI-assisted code editing",
+  "type": "object",
+  "required": ["meta", "entities"],
+  "properties": {
+    "meta": {
+      "type": "object",
+      "required": ["version", "project", "generated"],
+      "properties": {
+        "version": { "type": "string", "pattern": "^1\\.0$" },
+        "project": { "type": "string" },
+        "generated": { "type": "string", "format": "date-time" },
+        "description": { "type": "string" }
+      }
+    },
+    "entities": {
+      "type": "object",
+      "description": "Primary map of location_id to full entity data",
+      "patternProperties": {
+        "^[0-9]+$": {
+          "type": "object",
+          "required": ["type", "name", "file", "line_start", "line_end"],
+          "properties": {
+            "type": {
+              "type": "integer",
+              "enum": [0, 1, 2, 3, 4, 5, 6, 7],
+              "description": "entity_type from TECH-LOCATION"
+            },
+            "name": { "type": "string" },
+            "file": { "type": "string" },
+            "line_start": { "type": "integer" },
+            "line_end": { "type": "integer" },
+            "parent_id": {
+              "type": "integer",
+              "description": "parent_location_id"
+            },
+            "signature": {
+              "type": "array",
+              "minItems": 2,
+              "maxItems": 2,
+              "items": [
+                {"type": "integer", "description": "return_type_idx"},
+                {"type": "integer", "description": "params_pool_idx"}
+              ],
+              "description": "Compact signature [return_type_idx, params_pool_idx]"
+            },
+            "docstring": { "type": "string" },
+            "comments": {
+              "type": "array",
+              "items": { "type": "string" }
+            },
+            "class_info": {
+              "type": "object",
+              "properties": {
+                "bases": { "type": "array", "items": { "type": "string" } },
+                "mro": { "type": "array", "items": { "type": "string" } }
+              }
+            },
+            "called_by": {
+              "type": "array",
+              "items": { "type": "integer" },
+              "description": "Reverse call graph"
+            },
+            "calls": {
+              "type": "array",
+              "items": { "type": "integer" },
+              "description": "Direct call graph"
+            }
+          }
+        }
+      }
+    },
+    "file_index": {
+      "type": "object",
+      "description": "Quick lookup of entities by file",
+      "patternProperties": {
+        "^.*$": {
+          "type": "array",
+          "items": { "type": "integer" }
+        }
+      }
+    },
+    "name_index": {
+      "type": "object",
+      "description": "Quick lookup of entities by name",
+      "patternProperties": {
+        "^.*$": {
+          "type": "array",
+          "items": { "type": "integer" }
+        }
+      }
+    },
+    "signatures": {
+      "type": "object",
+      "properties": {
+        "params_pool": {
+          "type": "array",
+          "items": {
+            "type": "array",
+            "items": { "type": "integer" }
+          }
+        }
+      },
+      "required": ["params_pool"]
+    }
+  }
+}

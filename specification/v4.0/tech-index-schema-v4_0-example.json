@@ -1,0 +1,45 @@
+{
+  "meta": {"version": "4.1", "generated": "2024-01-15T10:30:00Z", "project": "py-indexer"},
+  "names": [
+    "cli_index", "IndexCLI", "run", "parse_arguments", "_get_output_filename",
+    "_get_serializer", "main", "argparse", "sys", "Path", "InputValidator",
+    "ASTParser", "CodeIndexer", "TechIndexBuilder", "JSONSerializer",
+    "MessagePackSerializer", "get_logger", "configure_root_logger", "find_python_files"
+  ],
+  "modules": [[0, -1, 0]],
+  "classes": [[1, 0, 2]],
+  "functions": [
+    [2, 2, 5],   // run
+    [3, 2, 6],   // parse_arguments  
+    [4, 0, 7],   // _get_output_filename
+    [5, 0, 8],   // _get_serializer
+    [6, 0, 9]    // main
+  ],
+  "imports": {
+    "7": [0],    // argparse в файле 0
+    "8": [0],    // sys в файле 0
+    "9": [0],    // Path в файле 0
+    "10": [0],   // InputValidator в файле 0
+    "11": [0],   // ASTParser в файле 0
+    "12": [0],   // CodeIndexer в файле 0
+    "13": [0],   // TechIndexBuilder в файле 0
+    "14": [0],   // JSONSerializer в файле 0
+    "15": [0],   // MessagePackSerializer в файле 0
+    "16": [0],   // get_logger в файле 0
+    "17": [0],   // configure_root_logger в файле 0  
+    "18": [0]    // find_python_files в файле 0
+  },
+  "signatures": {
+    "5": {"params": [[35, -1]], "return": 36},     // run
+    "6": {"params": [[37, -1]], "return": 38},     // parse_arguments
+    "7": {"params": [[39, -1], [40, -1], [41, -1]], "return": 42}  // _get_output_filename
+  },
+  "class_info": {
+    "2": {"bases": [], "mro": [2]}
+  },
+  "external_dependencies": [7, 8, 9],  // argparse, sys, Path
+  "call_graph": {
+    "5": [16, 17, 18],  // run вызывает get_logger, configure_root_logger, find_python_files
+    "9": [5]            // main вызывает run
+  }
+}

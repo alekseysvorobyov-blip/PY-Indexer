@@ -1,0 +1,199 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "TECH-INDEX v4.2",
+  "description": "Compact hierarchical Python code index with enhanced type support",
+  "type": "object",
+  "required": ["meta", "names", "type_strings", "default_values"],
+  "properties": {
+    "meta": {
+      "type": "object",
+      "required": ["version"],
+      "properties": {
+        "version": {"type": "string", "pattern": "^4\\.2$"},
+        "generated": {"type": "string", "format": "date-time"},
+        "project": {"type": "string"}
+      }
+    },
+    "names": {
+      "type": "array",
+      "items": {"type": "string"}
+    },
+    "type_strings": {
+      "type": "array",
+      "items": {"type": "string"},
+      "description": "Pool for type annotations (List[str], Dict[int, str], etc.)"
+    },
+    "default_values": {
+      "type": "array",
+      "items": {"type": "string"},
+      "description": "Pool for default parameter values as string representations"
+    },
+    "modules": {
+      "type": "array",
+      "items": {
+        "type": "array",
+        "minItems": 3,
+        "items": [
+          {"type": "integer", "description": "name_idx"},
+          {"type": "integer", "description": "parent_location_id"},
+          {"type": "integer", "description": "location_id"}
+        ]
+      }
+    },
+    "classes": {
+      "type": "array", 
+      "items": {
+        "type": "array",
+        "minItems": 3,
+        "items": [
+          {"type": "integer", "description": "name_idx"},
+          {"type": "integer", "description": "parent_location_id"},
+          {"type": "integer", "description": "location_id"}
+        ]
+      }
+    },
+    "functions": {
+      "type": "array",
+      "items": {
+        "type": "array", 
+        "minItems": 3,
+        "items": [
+          {"type": "integer", "description": "name_idx"},
+          {"type": "integer", "description": "parent_location_id"},
+          {"type": "integer", "description": "location_id"}
+        ]
+      }
+    },
+    "imports": {
+      "type": "object",
+      "patternProperties": {
+        "^[0-9]+$": {
+          "type": "array",
+          "items": {"type": "integer", "description": "file_location_id"}
+        }
+      }
+    },
+    "signatures": {
+      "type": "object",
+      "properties": {
+        "params_pool": {
+          "type": "array",
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "array",
+              "minItems": 3,
+              "maxItems": 4,
+              "items": [
+                {"type": "integer", "description": "param_name_idx"},
+                {"type": "integer", "description": "param_type_idx", "minimum": -1},
+                {"type": "integer", "description": "default_value_idx", "minimum": -1},
+                {"type": "integer", "description": "param_kind", "minimum": 0, "maximum": 3}
+              ]
+            }
+          },
+          "description": "Deduplicated parameter templates with types and kind"
+        },
+        "functions": {
+          "type": "array",
+          "items": {
+            "type": "array",
+            "minItems": 3,
+            "maxItems": 3,
+            "items": [
+              {"type": "integer", "description": "location_id"},
+              {"type": "integer", "description": "return_type_idx", "minimum": -1},
+              {"type": "integer", "description": "params_pool_idx"}
+            ]
+          },
+          "description": "[location_id, return_type_idx, params_pool_idx]"
+        }
+      },
+      "required": ["params_pool", "functions"]
+    },
+    "class_info": {
+      "type": "object", 
+      "patternProperties": {
+        "^[0-9]+$": {
+          "type": "object",
+          "properties": {
+            "bases": {"type": "array", "items": {"type": "integer"}},
+            "mro": {"type": "array", "items": {"type": "integer"}},
+            "methods": {
+              "type": "array",
+              "items": {
+                "type": "array",
+                "minItems": 5,
+                "items": [
+                  {"type": "integer", "description": "method_location_id"},
+                  {"type": "integer", "description": "method_name_idx"},
+                  {"type": "integer", "description": "visibility", "minimum": 0, "maximum": 2},
+                  {"type": "boolean", "description": "is_static"},
+                  {"type": "boolean", "description": "is_abstract"}
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "external_dependencies": {
+      "type": "array", 
+      "items": {"type": "integer", "description": "name_idx внешних модулей"}
+    },
+    "call_graph": {
+      "type": "object",
+      "patternProperties": {
+        "^[0-9]+$": {
+          "type": "array", 
+          "items": {
+            "type": "array",
+            "minItems": 2,
+            "maxItems": 3,
+            "items": [
+              {"type": "integer", "description": "callee_location_id"},
+              {"type": "integer", "description": "call_type", "minimum": 0, "maximum": 2},
+              {"type": "integer", "description": "frequency", "minimum": 0, "maximum": 2}
+            ]
+          }
+        }
+      }
+    },
+    "cross_references": {
+      "type": "object",
+      "properties": {
+        "name_to_locations": {
+          "type": "object",
+          "patternProperties": {
+            "^[0-9]+$": {
+              "type": "array",
+              "items": {"type": "integer"}
+            }
+          }
+        },
+        "type_references": {
+          "type": "object",
+          "patternProperties": {
+            "^[0-9]+$": {
+              "type": "array",
+              "items": {"type": "integer"}
+            }
+          }
+        }
+      }
+    },
+    "variable_info": {
+      "type": "object",
+      "patternProperties": {
+        "^[0-9]+$": {
+          "type": "object",
+          "properties": {
+            "declared_type": {"type": "integer", "minimum": -1},
+            "inferred_type": {"type": "integer", "minimum": -1},
+            "is_constant": {"type": "boolean"}
+          }
+        }
+      }
+    }
+  }
+}

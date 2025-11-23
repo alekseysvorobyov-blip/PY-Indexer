@@ -204,6 +204,16 @@ class PyIndexer:
                         class_info.line_start + min(doc_lines + 1, 10)
                     )
 
+                # Add class comments
+                if class_info.comments:
+                    for comment in class_info.comments:
+                        self.comments_builder.add_class_comment(
+                            class_loc_id,
+                            comment.text,
+                            rel_path,
+                            comment.line
+                        )
+
                 # Add class decorators
                 if class_info.decorators:
                     self.index_builder.add_decorators(class_loc_id, class_info.decorators)
@@ -237,6 +247,17 @@ class PyIndexer:
                             method.line_start + 1,
                             method.line_start + min(doc_lines + 1, 10)
                         )
+
+
+                    # Add method comments
+                    if method.comments:
+                        for comment in method.comments:
+                            self.comments_builder.add_function_comment(
+                                method_loc_id,
+                                comment.text,
+                                rel_path,
+                                comment.line
+                            )
 
                     # Add method decorators
                     if method.decorators:
@@ -280,6 +301,17 @@ class PyIndexer:
                         func.line_start + 1,
                         func.line_start + min(doc_lines + 1, 10)
                     )
+
+
+                # Add function comments
+                if func.comments:
+                    for comment in func.comments:
+                        self.comments_builder.add_function_comment(
+                            func_loc_id,
+                            comment.text,
+                            rel_path,
+                            comment.line
+                        )
 
                 # Add decorators
                 if func.decorators:

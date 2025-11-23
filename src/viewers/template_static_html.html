@@ -521,9 +521,16 @@
                 }
             }
 
+            // Calculate locationId if not already defined
+            let locationId;
+            if (item.type === 'function') {
+                const funcData = INDEX_DATA.functions[item.funcIdx];
+                locationId = funcData.length > 3 ? funcData[3] : item.funcIdx;
+            }
+
             // Comments
             if (COMMENTS_DATA && item.type === 'function' && COMMENTS_DATA.functions) {
-                const commEntry = COMMENTS_DATA.functions.find(c => c[0] === item.funcIdx);
+                const commEntry = COMMENTS_DATA.functions.find(c => c[0] === locationId);
                 if (commEntry && commEntry[1] && commEntry[1].length > 0) {
                     html += '<div class="detail-section"><h3>Comments</h3>';
                     commEntry[1].forEach(([textIdx, , line]) => {
